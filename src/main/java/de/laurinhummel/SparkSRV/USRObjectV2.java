@@ -1,5 +1,6 @@
 package de.laurinhummel.SparkSRV;
 
+//ICH HABE PLÄNE
 public class USRObjectV2 {
     private int id;
     private String name;
@@ -11,5 +12,7 @@ public class USRObjectV2 {
         this.money = money;
     }
 
+    public int getId() { return id; }
     public String getName() { return name; }
+    public int getMoney() { return money; }
 }

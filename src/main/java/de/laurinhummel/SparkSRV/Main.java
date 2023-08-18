@@ -1,16 +1,12 @@
 package de.laurinhummel.SparkSRV;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
+import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 import spark.Spark;
 
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -20,14 +16,42 @@ public class Main {
         Spark.get("/users/:id", new Route() {
             @Override
             public Object handle(Request request, Response response) throws SQLException {
-                System.out.println(1);
+                /*
                 USRObject user = getDao().queryForId(request.params(":id"));
-                System.out.println(2);
                 if (user != null) {
                     return "Username: " + user.getName(); // or JSON? :-)
                 } else {
                     response.status(404); // 404 Not found
                     return "User not found";
+                }
+
+                 */
+                return false;
+            }
+        });
+
+        Spark.get("/users", new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws SQLException {
+                String sqlArgs = "SELECT * FROM `logbuchv1` ORDER BY id ASC";
+
+                try {
+                    Connection connection = new MySQLConnectionHandler().connect();
+                    PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
+                    ResultSet rs = preparedStatement.executeQuery();
+                    StringBuilder sb = new StringBuilder();
+                        sb.append("user list: " + "\n");
+                    while (rs.next()) {
+                        sb.append("id: " + rs.getInt("id") + " - name: " + rs.getString("name") +
+                                " - money: " + rs.getInt("money") + "\n");
+                    }
+                    rs.close();
+                    preparedStatement.close();
+                    connection.close();
+                    return sb.toString();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return "Error in getUserList - Main function";
                 }
             }
         });
@@ -35,38 +59,40 @@ public class Main {
         Spark.get("/post", new Route() {
             @Override
             public Object handle(Request request, Response response) throws SQLException {
-                String name = request.queryParams("name");
-                int money = Integer.parseInt(request.queryParams("money"));
+                try {
+                    Connection conn = new MySQLConnectionHandler().connect();
+                    createTable(conn);
 
-                USRObject user = new USRObject();
-                user.setName(name);
-                user.setMoney(money);
+                    String query = "insert into LogbuchV1 (name, money)"
+                            + " values (?, ?)";
 
-                getDao().create(user);
+                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    preparedStmt.setString (1, request.queryParams("name"));
+                    preparedStmt.setString (2, request.queryParams("money"));
 
-                response.status(201); // 201 Created
+                    preparedStmt.execute();
+                    response.status(201); // 201 Created
 
-                return true;
+                    conn.close();
+
+                    return "User created";
+                } catch (Exception e) {
+                    System.err.println("Got an exception!");
+                    System.err.println(e.getMessage());
+                    return "Got an exception!";
+                }
             }
         });
     }
 
-    private static Dao<USRObject,String> getDao() throws SQLException {
-        try {
-            String databaseUrl = "jdbc:mysql://db4free.net:3306/sasrestapi?user=sparkapi&password=spark12345"; //"jdbc:mysql://localhost/spark";
-            ConnectionSource connectionSource;
+    public static void createTable(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS logbuchv1 (" +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+                "name VARCHAR(50) NOT NULL," +
+                "money INTEGER NOT NULL" +
+                ")";
 
-            connectionSource = new JdbcConnectionSource(databaseUrl);
-            ((JdbcConnectionSource)connectionSource).setUsername("sparkapi");
-            ((JdbcConnectionSource)connectionSource).setPassword("spark12345");
-
-            Dao<USRObject,String> userDao = DaoManager.createDao(connectionSource, USRObject.class);
-            TableUtils.createTableIfNotExists(connectionSource, USRObject.class);
-
-            return userDao;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
     }
 }
