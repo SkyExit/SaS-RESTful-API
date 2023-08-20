@@ -5,12 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLConnectionHandler {
-    public MySQLConnectionHandler() {
+    private Connection connection = null;
 
-    }
+    public MySQLConnectionHandler() { }
 
-    public Connection connect() {
-        Connection conn;
+    private Connection connect() {
         String HOSTNAME = "localhost";
         String PORT = "3306";
         String username = "root";
@@ -20,20 +19,40 @@ public class MySQLConnectionHandler {
 
         System.out.println("Loading driver...");
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Driver loaded!");
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find the driver in the classpath!", e);
+            throw new IllegalStateException("Cannot find the driver in the classpath! - custom", e);
         }
 
         System.out.println("Database: " + url);
         System.out.println("Connecting database...");
         try {
-            return DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(url, username, password);
+            return connection;
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         } finally {
             System.out.println("Database connected!");
+        }
+    }
+
+    public boolean isConnected() {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                return this.connection.isValid(5);
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return false;
+    }
+
+    public Connection getConnection() {
+        if(isConnected()) {
+            return connection;
+        } else {
+            return connect();
         }
     }
 }

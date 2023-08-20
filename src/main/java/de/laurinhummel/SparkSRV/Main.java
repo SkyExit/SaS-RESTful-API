@@ -13,6 +13,8 @@ public class Main {
         //Spark.get("/hello", (request, response) -> "Hello World");
         //TransactionHandler.validateUserBalance(1);
 
+        MySQLConnectionHandler handler = new MySQLConnectionHandler();
+
         Spark.get("/users/:id", new Route() {
             @Override
             public Object handle(Request request, Response response) throws SQLException {
@@ -36,7 +38,7 @@ public class Main {
                 String sqlArgs = "SELECT * FROM `logbuchv1` ORDER BY id ASC";
 
                 try {
-                    Connection connection = new MySQLConnectionHandler().connect();
+                    Connection connection = handler.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
                     ResultSet rs = preparedStatement.executeQuery();
                     StringBuilder sb = new StringBuilder();
@@ -47,7 +49,6 @@ public class Main {
                     }
                     rs.close();
                     preparedStatement.close();
-                    connection.close();
                     return sb.toString();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -60,20 +61,18 @@ public class Main {
             @Override
             public Object handle(Request request, Response response) throws SQLException {
                 try {
-                    Connection conn = new MySQLConnectionHandler().connect();
-                    createTable(conn);
+                    Connection connection = handler.getConnection();
+                    createTable(connection);
 
                     String query = "insert into LogbuchV1 (name, money)"
                             + " values (?, ?)";
 
-                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    PreparedStatement preparedStmt = connection.prepareStatement(query);
                     preparedStmt.setString (1, request.queryParams("name"));
                     preparedStmt.setString (2, request.queryParams("money"));
 
                     preparedStmt.execute();
                     response.status(201); // 201 Created
-
-                    conn.close();
 
                     return "User created";
                 } catch (Exception e) {
