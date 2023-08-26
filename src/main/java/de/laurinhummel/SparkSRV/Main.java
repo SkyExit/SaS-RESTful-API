@@ -19,7 +19,7 @@ public class Main {
             @Override
             public Object handle(Request request, Response response) throws SQLException {
                 /*
-                USRObject user = getDao().queryForId(request.params(":id"));
+                USRObject user = getDao().queryForId(request.params(":id"));k
                 if (user != null) {
                     return "Username: " + user.getName(); // or JSON? :-)
                 } else {

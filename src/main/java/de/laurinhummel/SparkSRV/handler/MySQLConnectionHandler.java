@@ -22,7 +22,7 @@ public class MySQLConnectionHandler {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Driver loaded!");
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find the driver in the classpath! - custom", e);
+            throw new IllegalStateException("Cannot find the driver in the classpath! - custom2", e);
         }
 
         System.out.println("Database: " + url);
