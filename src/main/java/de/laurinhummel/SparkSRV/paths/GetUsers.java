@@ -1,4 +1,4 @@
-package paths;
+package de.laurinhummel.SparkSRV.paths;
 
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import org.json.JSONArray;
@@ -25,12 +25,9 @@ public class GetUsers implements Route {
             ResultSet rs = preparedStatement.executeQuery();
 
             JSONObject jo = new JSONObject();
-                jo.put("response", 200);
-
+                jo.put("status", response.status());
             JSONArray ja = new JSONArray();
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("user list: " + "\n");
             while (rs.next()) {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))

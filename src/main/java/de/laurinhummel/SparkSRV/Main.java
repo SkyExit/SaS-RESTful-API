@@ -1,11 +1,9 @@
 package de.laurinhummel.SparkSRV;
 
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
-import paths.GetUsers;
-import paths.PostCreate;
-import spark.Request;
-import spark.Response;
-import spark.Route;
+import de.laurinhummel.SparkSRV.paths.GetUser;
+import de.laurinhummel.SparkSRV.paths.GetUsers;
+import de.laurinhummel.SparkSRV.paths.PostCreate;
 import spark.Spark;
 
 import java.sql.*;
@@ -18,19 +16,7 @@ public class Main {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
         Spark.port(8080);
 
-        Spark.get("/users/:id", (request, response) -> {
-            /*
-            USRObject user = getDao().queryForId(request.params(":id"));k
-            if (user != null) {
-                return "Username: " + user.getName(); // or JSON? :-)
-            } else {
-                response.status(404); // 404 Not found
-                return "User not found";
-            }
-
-             */
-            return false;
-        });
+        Spark.get("/users/:id", new GetUser(handler));
 
         Spark.get("/users", new GetUsers(handler));
 
