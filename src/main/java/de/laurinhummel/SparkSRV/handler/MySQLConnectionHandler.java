@@ -10,11 +10,11 @@ public class MySQLConnectionHandler {
     public MySQLConnectionHandler() { }
 
     private Connection connect() {
-        String HOSTNAME = "localhost";
+        String HOSTNAME = "sql229.your-server.de";
         String PORT = "3306";
-        String username = "root";
-        String DBNAME = "sas-spark-api";
-        String password = "root";
+        String username = "laurin_1";
+        String DBNAME = "laurin_db1";
+        String password = "yDeSn57NMdwnMk7C";
         String url = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
 
         System.out.println("Loading driver...");

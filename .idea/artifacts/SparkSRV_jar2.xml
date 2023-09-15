@@ -24,10 +24,11 @@
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-security:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-servlet:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.48.v20220622" />
-      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-http:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: com.mysql:mysql-connector-j:8.0.33" />
       <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.9" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:2.0.9" />
     </root>
   </artifact>
 </component>
