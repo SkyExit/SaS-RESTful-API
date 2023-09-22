@@ -15,7 +15,8 @@ public class MySQLConnectionHandler {
         String username = "laurin_1";
         String DBNAME = "laurin_db1";
         String password = "yDeSn57NMdwnMk7C";
-        String url = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
+        String url = false ? "jdbc:mysql://u33515_X8lzuzNisT:sdK8uQdT3tL7KsAg%5Ej%2BYb%5E!D@161.97.78.70:3306/s33515_SaS-RESTFUL-API" :
+                "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
 
         System.out.println("Loading driver...");
         try {
@@ -29,11 +30,10 @@ public class MySQLConnectionHandler {
         System.out.println("Connecting database...");
         try {
             connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Database connected!");
             return connection;
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
-        } finally {
-            System.out.println("Database connected!");
         }
     }
 

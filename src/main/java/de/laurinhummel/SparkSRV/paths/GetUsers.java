@@ -18,7 +18,7 @@ public class GetUsers implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String sqlArgs = "SELECT * FROM `logbuchv1` ORDER BY id ASC";
+        String sqlArgs = "SELECT * FROM `logbuchv2` ORDER BY name ASC";
         try {
             Connection connection = handler.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
@@ -31,8 +31,10 @@ public class GetUsers implements Route {
             while (rs.next()) {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
+                        .put("validation", rs.getString("validation"))
                         .put("name", rs.getString("name"))
-                        .put("money", rs.getInt("money")));
+                        .put("money", rs.getInt("money"))
+                        .put("priority", rs.getInt("priority")));
             }
             jo.put("users", ja);
 

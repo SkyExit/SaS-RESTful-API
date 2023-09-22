@@ -5,9 +5,9 @@ Class-Path: javax.servlet-api-3.1.0.jar jetty-client-9.4.48.v20220622.ja
  ecurity-9.4.48.v20220622.jar jetty-server-9.4.48.v20220622.jar jetty-se
  rvlet-9.4.48.v20220622.jar jetty-util-9.4.48.v20220622.jar jetty-util-a
  jax-9.4.48.v20220622.jar jetty-webapp-9.4.48.v20220622.jar jetty-xml-9.
- 4.48.v20220622.jar mysql-connector-j-8.0.33.jar protobuf-java-3.21.9.ja
- r slf4j-api-2.0.9.jar slf4j-simple-2.0.9.jar spark-core-2.9.4.jar webso
- cket-api-9.4.48.v20220622.jar websocket-client-9.4.48.v20220622.jar web
- socket-common-9.4.48.v20220622.jar websocket-server-9.4.48.v20220622.ja
- r websocket-servlet-9.4.48.v20220622.jar
+ 4.48.v20220622.jar json-20230618.jar mysql-connector-j-8.0.33.jar proto
+ buf-java-3.21.9.jar slf4j-api-2.0.9.jar slf4j-simple-2.0.9.jar spark-co
+ re-2.9.4.jar SparkSRV.jar websocket-api-9.4.48.v20220622.jar websocket-
+ client-9.4.48.v20220622.jar websocket-common-9.4.48.v20220622.jar webso
+ cket-server-9.4.48.v20220622.jar websocket-servlet-9.4.48.v20220622.jar
 

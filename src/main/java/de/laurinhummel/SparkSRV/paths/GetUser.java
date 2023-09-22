@@ -1,6 +1,7 @@
 package de.laurinhummel.SparkSRV.paths;
 
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
@@ -17,7 +18,18 @@ public class GetUser implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String sqlArgs = "SELECT * FROM `logbuchv1` WHERE id=" + request.params(":id");
+        String validationID;
+
+        try {
+            JSONObject body = new JSONObject(request.body());
+            validationID = body.getString("validation");
+        } catch (JSONException ex) {
+            response.status(500);
+            ex.printStackTrace();
+            return "Error while parsing JSON - GetUser";
+        }
+
+        String sqlArgs = "SELECT * FROM `logbuchv2` WHERE `validation`='" + validationID + "'";
 
         try {
             Connection connection = handler.getConnection();
@@ -33,8 +45,10 @@ public class GetUser implements Route {
                 return  new JSONObject().put("response", response.status());
             } else {
                 ja.put("id", rs.getInt("id"));
+                ja.put("validation", rs.getString("validation"));
                 ja.put("name", rs.getString("name"));
                 ja.put("money", rs.getInt("money"));
+                ja.put("priority", rs.getInt("priority"));
             }
 
             jo.put("user", ja);
@@ -44,6 +58,7 @@ public class GetUser implements Route {
             return jo;
         } catch (SQLException e) {
             e.printStackTrace();
+            response.status(500);
             return "Error in getUserList - Main function";
         }
     }

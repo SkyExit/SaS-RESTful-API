@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact name="SparkSRV:jar2">
-    <output-path>$PROJECT_DIR$/out/artifacts/SparkSRV_jar2</output-path>
+  <artifact name="SparkSRV">
+    <output-path>$PROJECT_DIR$/out/artifacts/SparkSRV</output-path>
     <root id="root">
       <element id="archive" name="SparkSRV.jar">
         <element id="directory" name="META-INF">
@@ -29,6 +29,7 @@
       <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
       <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.9" />
       <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:2.0.9" />
+      <element id="library" level="project" name="Maven: org.json:json:20230618" />
     </root>
   </artifact>
 </component>
