@@ -19,13 +19,13 @@ public class Main {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
         Spark.port(5260);
 
-        Spark.get("/user", new GetUser(handler));
+        Spark.get("/users/:validation", new GetUser(handler));
 
         Spark.get("/users", new GetUsers(handler));
 
         Spark.post("/create", new PostCreate(handler));
 
-        Spark.put("/transaction", new PutTransaction(handler));
+        Spark.patch("/transaction", new PutTransaction(handler));
     }
 
     public static void createLogbuch(Connection conn) throws SQLException {

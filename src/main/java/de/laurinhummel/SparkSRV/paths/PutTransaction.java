@@ -1,20 +1,25 @@
 package de.laurinhummel.SparkSRV.paths;
 
 import de.laurinhummel.SparkSRV.Main;
+import de.laurinhummel.SparkSRV.USRObjectV2;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
-
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class PutTransaction implements Route {
     MySQLConnectionHandler handler;
@@ -22,6 +27,7 @@ public class PutTransaction implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        response.type("application/json");
         Connection connection = handler.getConnection();
         Main.createBlockchain(connection);
 
@@ -34,8 +40,6 @@ public class PutTransaction implements Route {
             validationActive = body.getString("validation_active");
             validationPassive = body.getString("validation_passive");
             money = body.getInt("money");
-
-
         } catch (JSONException ex) {
             response.status(500);
             ex.printStackTrace();
@@ -44,61 +48,54 @@ public class PutTransaction implements Route {
         }
 
         try {
-            /*Ü
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPut httpPut = new HttpPut("http://localhost:5260/user/");
-            StringEntity params = new StringEntity("{ \"validation\": \"" + validationActive + "\"}");
-            httpPut.addHeader("content-type", "application/json");
-            httpPut.setEntity(params);
-            HttpResponse httpResponse = httpClient.execute(httpPut);
+            String sqlArgs = "SELECT * FROM `logbuchv2` WHERE `validation`='" + validationActive + "' OR `validation`='" + validationPassive + "' ORDER BY `priority` DESC";
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = statement.executeQuery(sqlArgs);
 
-            System.out.println("res:" + httpResponse.toString());
-             */
+            JSONObject jo = new JSONObject();
+                jo.put("status", response.status());
+            JSONArray ja = new JSONArray();
 
-            /*
-            URL url = new URL ("http://localhost:5260/user");
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setRequestMethod("PUT");
-            con.setDoOutput(true);
-            String jsonInputString = "{\"validation\": \"" + validationActive + "\" }";
-
-            try(OutputStream os = con.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
+            rs.last();
+            if(rs.getRow() != 2) {
+                response.status(404);
+                return new JSONObject().put("response", response.status())
+                        .put("status", "One or more users not found");
             }
 
-            try(BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8"))) {
-                StringBuilder stringBuilder = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    stringBuilder.append(responseLine.trim());
-                }
-                System.out.println(stringBuilder.toString());
+            USRObjectV2 active;
+            USRObjectV2 passive;
+
+            rs.first();
+            if(rs.getString("validation").equals(validationActive)) {
+                active = putDATA(rs);
+                rs.next();
+                passive = putDATA(rs);
+            } else {
+                passive = putDATA(rs);
+                rs.next();
+                active = putDATA(rs);
             }
-             */
 
-            var client = HttpClient.newHttpClient();
-            var message = "{ \"validation\": \"rVUoPYJ0ps\" }";
+            System.out.println(active.getPriority() + " " + passive.getPriority());
+            if(active.getPriority() <= passive.getPriority()) {
+                response.status(401);
+                return new JSONObject().put("response", response.status())
+                        .put("status", "You don't have the permission to execute this transaction");
+            }
 
-            var uri = new URI("http://localhost:5260/user");
-
-                    var httpRequest = HttpRequest.newBuilder(uri).
-                    PUT(BodyPublishers.ofString(message))
-                    .header("Content-Type", "application/json").
-                    build();
-
-
-            var httpResponse = client.send(httpRequest, BodyHandlers.discarding());
-
-            //var locationHeader = httpResponse.headers().firstValue("Location").get();
-            System.out.println(httpResponse);
-
+            rs.close();
+            statement.close();
+            return jo;
         } catch (Exception ex) {
-            System.out.println("error");
             ex.printStackTrace();
         }
 
         return "null";
+    }
+
+    private USRObjectV2 putDATA(ResultSet rs) throws SQLException {
+        return new USRObjectV2(rs.getInt("id"), rs.getString("validation"), rs.getString("name"),
+                rs.getInt("money"), rs.getInt("priority"));
     }
 }

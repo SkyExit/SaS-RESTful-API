@@ -18,12 +18,12 @@ public class GetUser implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        response.type("application/json");
         String validationID;
 
         try {
-            JSONObject body = new JSONObject(request.body());
-            validationID = body.getString("validation");
-        } catch (JSONException ex) {
+            validationID = request.params(":validation");
+        } catch (Exception ex) {
             response.status(500);
             ex.printStackTrace();
             return "Error while parsing JSON - GetUser";
@@ -42,7 +42,7 @@ public class GetUser implements Route {
 
             if(!rs.next()) {
                 response.status(404);
-                return  new JSONObject().put("response", response.status());
+                return new JSONObject().put("response", response.status());
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));

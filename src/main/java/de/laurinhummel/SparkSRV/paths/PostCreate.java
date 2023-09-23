@@ -21,7 +21,7 @@ public class PostCreate implements Route {
     public Object handle(Request request, Response response) throws Exception {
         try {
             Connection connection = handler.getConnection();
-            Main.createLogbuch(connection);
+            //Main.createLogbuch(connection);
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
