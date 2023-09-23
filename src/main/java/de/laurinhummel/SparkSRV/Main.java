@@ -4,7 +4,7 @@ import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.paths.GetUser;
 import de.laurinhummel.SparkSRV.paths.GetUsers;
 import de.laurinhummel.SparkSRV.paths.PostCreate;
-import de.laurinhummel.SparkSRV.paths.PutTransaction;
+import de.laurinhummel.SparkSRV.paths.PatchTransaction;
 import spark.Spark;
 
 import java.sql.*;
@@ -25,7 +25,7 @@ public class Main {
 
         Spark.post("/create", new PostCreate(handler));
 
-        Spark.patch("/transaction", new PutTransaction(handler));
+        Spark.patch("/transaction", new PatchTransaction(handler));
     }
 
     public static void createLogbuch(Connection conn) throws SQLException {

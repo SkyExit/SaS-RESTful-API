@@ -21,4 +21,6 @@ public class USRObjectV2 {
     public String getName() { return name; }
     public int getMoney() { return money; }
     public int getPriority() { return priority; }
+
+    public void setMoney(int newMoney) { money = newMoney; }
 }

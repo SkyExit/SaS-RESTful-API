@@ -6,7 +6,7 @@
 
     <groupId>de.laurinhummel</groupId>
     <artifactId>SparkSRV</artifactId>
-    <version>0.6.9-ALPHA</version>
+    <version>0.6.12-ALPHA</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -44,11 +44,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
         </dependency>
     </dependencies>
 </project>
