@@ -28,6 +28,8 @@ public class Main {
         Spark.patch("/transaction", new PatchTransaction(handler));
     }
 
+    public static final String APITOKEN = "40263hv-0824ff933a-4014ff9345-d7c0402";
+
     public static void createLogbuch(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS logbuchv2 (" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +

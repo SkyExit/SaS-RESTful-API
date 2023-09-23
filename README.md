@@ -16,3 +16,6 @@ PatchTransaction: http://fi1.bot-hosting.net:5260/transaction
 ```
 
 PostCreate: http://fi1.bot-hosting.net:5260/create?name=Hummel, Laurin
+
+API-Key wird über den header übertragen:
+Authentication: KEY

@@ -1,6 +1,7 @@
 package de.laurinhummel.SparkSRV.paths;
 
 import de.laurinhummel.SparkSRV.Main;
+import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import org.apache.commons.lang3.RandomStringUtils;
 import spark.Request;
@@ -19,9 +20,14 @@ public class PostCreate implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        String auth = request.headers("Authentication");
+        if(auth == null || !auth.equals(Main.APITOKEN)) {
+            return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
+        }
+
         try {
             Connection connection = handler.getConnection();
-            //Main.createLogbuch(connection);
+            Main.createLogbuch(connection);
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
@@ -35,11 +41,10 @@ public class PostCreate implements Route {
                 preparedStmt.setString (4, "1");
 
             preparedStmt.execute();
-            response.status(201); // 201 Created
 
             Logger.getGlobal().log(Level.INFO, "USR created: " + request.queryParams("name") + "(p1) - " + val);
 
-            return "User created";
+            return JRepCrafter.cancelOperation(response, 201, "User created successfully");
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());
