@@ -31,9 +31,8 @@ public class GetUser implements Route {
         try {
             validationID = request.params(":validation");
         } catch (Exception ex) {
-            response.status(500);
             ex.printStackTrace();
-            return "Error while parsing JSON - GetUser";
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
         }
 
         String sqlArgs = "SELECT * FROM `logbuchv2` WHERE `validation`='" + validationID + "'";
@@ -48,8 +47,7 @@ public class GetUser implements Route {
             JSONObject ja = new JSONObject();
 
             if(!rs.next()) {
-                response.status(404);
-                return new JSONObject().put("response", response.status());
+                return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));
@@ -65,8 +63,7 @@ public class GetUser implements Route {
             return jo;
         } catch (SQLException e) {
             e.printStackTrace();
-            response.status(500);
-            return "Error in getUserList - Main function";
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
         }
     }
 }

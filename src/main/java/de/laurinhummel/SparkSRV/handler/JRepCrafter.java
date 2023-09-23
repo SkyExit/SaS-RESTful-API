@@ -1,8 +1,6 @@
 package de.laurinhummel.SparkSRV.handler;
 
-import de.laurinhummel.SparkSRV.Main;
 import org.json.JSONObject;
-import spark.Request;
 import spark.Response;
 
 public class JRepCrafter {

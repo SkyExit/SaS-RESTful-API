@@ -11,6 +11,8 @@ import spark.Response;
 import spark.Route;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PatchTransaction implements Route {
     MySQLConnectionHandler handler;
@@ -43,7 +45,7 @@ public class PatchTransaction implements Route {
         } catch (JSONException ex) {
             response.status(500);
             ex.printStackTrace();
-            return "Error while parsing JSON - GetUser";
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
         }
 
         //FETCH BOTH USERS AND CHECK VALIDITY
@@ -54,9 +56,7 @@ public class PatchTransaction implements Route {
 
             rs.last();
             if(rs.getRow() != 2) {
-                response.status(404);
-                return new JSONObject().put("response", response.status())
-                        .put("status", "One or more users not found");
+                return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found");
             }
 
             rs.first();
@@ -72,18 +72,14 @@ public class PatchTransaction implements Route {
 
             System.out.println(active.getPriority() + " " + passive.getPriority());
             if(active.getPriority() <= passive.getPriority()) {
-                response.status(401);
-                return new JSONObject().put("response", response.status())
-                        .put("status", "You don't have the permission to execute this transaction");
+                return JRepCrafter.cancelOperation(response, 401, "You don't have permissions to perform this transaction");
             }
 
             rs.close();
             statement.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            response.status(500);
-            return new JSONObject().put("response", response.status())
-                    .put("status", "There was an error parsing your command");
+            return JRepCrafter.cancelOperation(response, 500, "There was an error while parsing multiple users data");
         }
 
         //MONEY VALIDITY CHECKER
@@ -93,9 +89,7 @@ public class PatchTransaction implements Route {
             active.setMoney(active.getMoney() + money);
             System.out.println("ac: " + active.getMoney() + "   pas: " + passive.getMoney());
         } else {
-            response.status(403);
-            return new JSONObject().put("response", response.status())
-                    .put("status", "He doesn't have enough money for this transaction");
+            return JRepCrafter.cancelOperation(response, 403, "He doesn't have enough money for this purchase");
         }
 
         //UPDATE MONEY ON DATABASE
@@ -104,39 +98,36 @@ public class PatchTransaction implements Route {
             connection.prepareStatement("UPDATE `logbuchv2` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            response.status(500);
-            return new JSONObject().put("response", response.status())
-                    .put("status", "There was an error while pushing back to database");
+            return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
         }
 
         //INSERTING DATA INTO BLOCKCHAIN
-        /*
         try {
-            String query = "insert into blockchainv1 (validation_active, name_active, money, priority)"
-                    + " values (?, ?, ?, ?)";
+            String query = "insert into blockchainv1 (validation_active, name_active, validation_passive, name_passive, money)"
+                    + " values (?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
-                preparedStmt.setString(1, val);
-                preparedStmt.setString (2, request.queryParams("name"));
-                preparedStmt.setString (3, "0");
-                preparedStmt.setString (4, "1");
+                preparedStmt.setString(1, active.getValidation());
+                preparedStmt.setString (2, active.getName());
+                preparedStmt.setString (3, passive.getValidation());
+                preparedStmt.setString (4, passive.getName());
+                preparedStmt.setString (5, String.valueOf(money));
 
             preparedStmt.execute();
-            response.status(201); // 201 Created
 
-            Logger.getGlobal().log(Level.INFO, "USR created: " + request.queryParams("name") + "(p1) - " + val);
+            if(money > 0) {
+                Logger.getGlobal().log(Level.INFO, "'" + passive.getName() + "' moved " + (money*(-1)) + "€ to '" + active.getName() + "'");
+            } else {
+                Logger.getGlobal().log(Level.INFO, "'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
+            }
+
+
         } catch (SQLException ex) {
             ex.printStackTrace();
-            response.status(500);
-            return new JSONObject().put("response", response.status())
-                    .put("status", "There was an error while pushing back to database");
+            return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
         }
-        -
-         */
 
-        response.status(200);
-        return new JSONObject().put("response", response.status())
-                .put("status", "Updating balances was a success");
+        return JRepCrafter.cancelOperation(response, 200, "Performing transaction was a success");
     }
 
     private USRObjectV2 putDATA(ResultSet rs) throws SQLException {

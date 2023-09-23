@@ -51,7 +51,7 @@ public class GetUsers implements Route {
             return jo;
         } catch (SQLException e) {
             e.printStackTrace();
-            return "Error in getUserList - Main function";
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
         }
     }
 }
