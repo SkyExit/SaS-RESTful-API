@@ -31,6 +31,7 @@
       <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:2.0.9" />
       <element id="library" level="project" name="Maven: org.json:json:20230618" />
       <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.13.0" />
+      <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.43.0.0" />
     </root>
   </artifact>
 </component>

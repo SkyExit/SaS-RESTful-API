@@ -30,11 +30,10 @@ public class Main {
 
     public static final String APITOKEN = "40263hv-0824ff933a-4014ff9345-d7c0402";
 
-    public static void createLogbuch(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS logbuchv2 (" +
-                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+    public static void createWealth(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v1 (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "validation VARCHAR(10) NOT NULL," +
-                "name VARCHAR(50) NOT NULL," +
                 "money INTEGER NOT NULL," +
                 "priority INTEGER NOT NULL" + ")";
 
@@ -43,14 +42,12 @@ public class Main {
         stmt.close();
     }
 
-    public static void createBlockchain(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS blockchainv1 (" +
-                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+    public static void createTransactions(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_transactions_v1 (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "validation_active VARCHAR(10) NOT NULL," +
-                "name_active VARCHAR(50) NOT NULL," +
                 "validation_passive VARCHAR(10) NOT NULL," +
-                "name_passive VARCHAR(50) NOT NULL," +
                 "money INTEGER NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();

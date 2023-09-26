@@ -25,9 +25,11 @@ public class GetUsers implements Route {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
-        String sqlArgs = "SELECT * FROM `logbuchv2` ORDER BY name ASC";
+        String sqlArgs = "SELECT * FROM `sas_wealth_v1` ORDER BY id ASC";
         try {
             Connection connection = handler.getConnection();
+                Main.createWealth(connection);
+
             PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
             ResultSet rs = preparedStatement.executeQuery();
 
@@ -39,7 +41,6 @@ public class GetUsers implements Route {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
                         .put("validation", rs.getString("validation"))
-                        .put("name", rs.getString("name"))
                         .put("money", rs.getInt("money"))
                         .put("priority", rs.getInt("priority")));
             }

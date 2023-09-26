@@ -6,7 +6,7 @@
 
     <groupId>de.laurinhummel</groupId>
     <artifactId>SparkSRV</artifactId>
-    <version>0.6.14-ALPHA</version>
+    <version>0.6.17-ALPHA</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -24,6 +24,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.43.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

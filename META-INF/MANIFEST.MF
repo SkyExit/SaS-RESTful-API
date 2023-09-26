@@ -7,8 +7,8 @@ Class-Path: commons-lang3-3.13.0.jar javax.servlet-api-3.1.0.jar jetty-c
  20220622.jar jetty-util-ajax-9.4.48.v20220622.jar jetty-webapp-9.4.48.v
  20220622.jar jetty-xml-9.4.48.v20220622.jar json-20230618.jar mysql-con
  nector-j-8.0.33.jar protobuf-java-3.21.9.jar slf4j-api-2.0.9.jar slf4j-
- simple-2.0.9.jar spark-core-2.9.4.jar SparkSRV.jar websocket-api-9.4.48
- .v20220622.jar websocket-client-9.4.48.v20220622.jar websocket-common-9
- .4.48.v20220622.jar websocket-server-9.4.48.v20220622.jar websocket-ser
- vlet-9.4.48.v20220622.jar
+ simple-2.0.9.jar spark-core-2.9.4.jar sqlite-jdbc-3.43.0.0.jar websocke
+ t-api-9.4.48.v20220622.jar websocket-client-9.4.48.v20220622.jar websoc
+ ket-common-9.4.48.v20220622.jar websocket-server-9.4.48.v20220622.jar w
+ ebsocket-servlet-9.4.48.v20220622.jar
 

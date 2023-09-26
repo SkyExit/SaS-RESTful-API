@@ -11,8 +11,6 @@ import spark.Route;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PostCreate implements Route {
     MySQLConnectionHandler handler;
@@ -27,24 +25,21 @@ public class PostCreate implements Route {
 
         try {
             Connection connection = handler.getConnection();
-            Main.createLogbuch(connection);
+            Main.createWealth(connection);
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
-            String query = "insert into logbuchv2 (validation, name, money, priority)"
-                    + " values (?, ?, ?, ?)";
+            String query = "insert into sas_wealth_v1 (validation, money, priority)"
+                    + " values (?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
                 preparedStmt.setString(1, val);
-                preparedStmt.setString (2, request.queryParams("name"));
-                preparedStmt.setString (3, "0");
-                preparedStmt.setString (4, "1");
+                preparedStmt.setString (2, "0");
+                preparedStmt.setString (3, "1");
 
             preparedStmt.execute();
 
-            Logger.getGlobal().log(Level.INFO, "USR created: " + request.queryParams("name") + "(p1) - " + val);
-
-            return JRepCrafter.cancelOperation(response, 201, "User created successfully");
+            return JRepCrafter.cancelOperation(response, 201, "User created successfully").put("validationID", val);
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());
