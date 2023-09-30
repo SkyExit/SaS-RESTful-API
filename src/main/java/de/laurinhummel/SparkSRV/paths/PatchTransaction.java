@@ -1,5 +1,6 @@
 package de.laurinhummel.SparkSRV.paths;
 
+import com.mysql.cj.protocol.ResultsetRow;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.USRObjectV2;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
@@ -63,12 +64,14 @@ public class PatchTransaction implements Route {
             if(rs.isBeforeFirst()) { rs.next(); }
             if(rs.getString("validation").equals(validationActive)) {
                 active = putDATA(rs);
-                rs.next();
+                if(!rs.next()) { return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found"); }
                 passive = putDATA(rs);
+                if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
             } else {
                 passive = putDATA(rs);
-                rs.next();
+                if(!rs.next()) { return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found"); }
                 active = putDATA(rs);
+                if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
             }
 
             System.out.println(active.getPriority() + " " + passive.getPriority());

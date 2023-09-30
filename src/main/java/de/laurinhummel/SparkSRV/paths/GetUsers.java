@@ -33,8 +33,6 @@ public class GetUsers implements Route {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
             ResultSet rs = preparedStatement.executeQuery();
 
-            JSONObject jo = new JSONObject();
-                jo.put("status", response.status());
             JSONArray ja = new JSONArray();
 
             while (rs.next()) {
@@ -45,12 +43,10 @@ public class GetUsers implements Route {
                         .put("money", rs.getInt("money"))
                         .put("priority", rs.getInt("priority")));
             }
-            jo.put("users", ja);
-
 
             rs.close();
             preparedStatement.close();
-            return jo;
+            return JRepCrafter.successOperation(response, 200).put("users", ja);
         } catch (SQLException e) {
             e.printStackTrace();
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");

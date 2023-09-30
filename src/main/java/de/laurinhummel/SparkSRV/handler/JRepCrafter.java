@@ -9,4 +9,10 @@ public class JRepCrafter {
         return new JSONObject().put("status", response.status())
                 .put("message", message);
     }
+
+    public static JSONObject successOperation(Response response, int statusCode) {
+        response.status(statusCode);
+        return new JSONObject().put("status", response.status())
+                .put("status", statusCode);
+    }
 }

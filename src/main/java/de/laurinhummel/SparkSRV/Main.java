@@ -40,14 +40,21 @@ public class Main {
         });
 
         Spark.get("/users/:validation", new GetUser(handler));
+        Spark.get("/users/:validation/", new GetUser(handler));
 
         Spark.get("/users", new GetUsers(handler));
+        Spark.get("/users/", new GetUsers(handler));
 
         Spark.post("/create", new PostCreate(handler));
+        Spark.post("/create/", new PostCreate(handler));
 
         Spark.patch("/transaction", new PatchTransaction(handler));
+        Spark.patch("/transaction/", new PatchTransaction(handler));
 
         Spark.get("/history/:validation", new GetHistory(handler));
+        Spark.get("/history/:validation/", new GetHistory(handler));
+        Spark.get("/history", new GetHistory(handler));
+        Spark.get("/history/", new GetHistory(handler));
     }
 
     public static final String APITOKEN = "40263hv-0824ff933a-4014ff9345-d7c0402";

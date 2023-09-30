@@ -42,7 +42,7 @@ public class PostCreate implements Route {
             preparedStmt.execute();
 
 
-            return JRepCrafter.cancelOperation(response, 201, "User created successfully").put("validationID", val).put("name", name);
+            return JRepCrafter.successOperation(response, 201).put("validationID", val).put("name", name).put("message", "User created successfully");
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());
