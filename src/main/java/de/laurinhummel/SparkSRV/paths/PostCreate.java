@@ -3,6 +3,7 @@ package de.laurinhummel.SparkSRV.paths;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.apache.commons.lang3.RandomStringUtils;
 import spark.Request;
 import spark.Response;
@@ -17,7 +18,7 @@ public class PostCreate implements Route {
     public PostCreate(MySQLConnectionHandler handler) { this.handler = handler; }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handle(Request request, Response response) {
         String auth = request.headers("Authentication");
         if(auth == null || !auth.equals(Main.APITOKEN)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
@@ -46,7 +47,7 @@ public class PostCreate implements Route {
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());
-            e.printStackTrace();
+            SkyLogger.logStack(e);
             return "Got an exception!";
         }
     }

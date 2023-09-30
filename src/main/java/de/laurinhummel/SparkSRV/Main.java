@@ -1,19 +1,19 @@
 package de.laurinhummel.SparkSRV;
 
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;
 import spark.Spark;
 
 import java.sql.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        Logger log = Logger.getGlobal();
-            log.log(Level.INFO, "SparkSRV started");
-
+    public static void main(String[] args) {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
+
+        SkyLogger.log(Level.INFO, "Spark ignited");
+
         Spark.port(5260);
 
         Spark.staticFiles.location("/assets");
@@ -62,7 +62,7 @@ public class Main {
     public static void createWealth(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v2 (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name VARCHAR(50) DEFAULT 'not set'," +
+                "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(10) NOT NULL," +
                 "money INTEGER NOT NULL," +
                 "priority INTEGER NOT NULL" + ")";
@@ -78,7 +78,7 @@ public class Main {
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "validation_active VARCHAR(10) NOT NULL," +
                 "name_active VARCHAR(50) NOT NULL," +
-                "validation_passive VARCHAR(10) NOT NULL," +
+                "validation_passive VARCHAR(10)," +
                 "name_passive VARCHAR(50) NOT NULL," +
                 "money INTEGER NOT NULL" + ")";
 

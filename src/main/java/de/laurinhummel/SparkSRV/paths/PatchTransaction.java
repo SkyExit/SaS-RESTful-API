@@ -1,10 +1,10 @@
 package de.laurinhummel.SparkSRV.paths;
 
-import com.mysql.cj.protocol.ResultsetRow;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.USRObjectV2;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
@@ -44,7 +44,7 @@ public class PatchTransaction implements Route {
             money = body.getInt("money");
         } catch (JSONException ex) {
             response.status(500);
-            ex.printStackTrace();
+            SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
         }
 
@@ -54,25 +54,17 @@ public class PatchTransaction implements Route {
             Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery(sqlArgs);
 
-            /*
-            rs.last();
-            if(rs.getRow() != 2) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found");
-            }
-             */
-
             if(rs.isBeforeFirst()) { rs.next(); }
             if(rs.getString("validation").equals(validationActive)) {
                 active = putDATA(rs);
                 if(!rs.next()) { return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found"); }
                 passive = putDATA(rs);
-                if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
             } else {
                 passive = putDATA(rs);
                 if(!rs.next()) { return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found"); }
                 active = putDATA(rs);
-                if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
             }
+            if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
 
             System.out.println(active.getPriority() + " " + passive.getPriority());
             if(active.getPriority() <= passive.getPriority()) {
@@ -82,7 +74,7 @@ public class PatchTransaction implements Route {
             rs.close();
             statement.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "There was an error while parsing multiple users data");
         }
 
@@ -101,7 +93,7 @@ public class PatchTransaction implements Route {
             connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + active.getMoney() + "' WHERE `validation`='" + active.getValidation() + "'").execute();
             connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
         }
 
@@ -127,7 +119,7 @@ public class PatchTransaction implements Route {
 
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
         }
 

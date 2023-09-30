@@ -3,7 +3,6 @@ package de.laurinhummel.SparkSRV.handler;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -13,11 +12,11 @@ public class MySQLConnectionHandler {
     public MySQLConnectionHandler() { }
 
     private Connection connect() {
-        String HOSTNAME = "sql229.your-server.de";
-        String PORT = "3306";
-        String username = "laurin_1";
-        String DBNAME = "laurin_db1";
-        String password = "yDeSn57NMdwnMk7C";
+        //String HOSTNAME = "sql229.your-server.de";
+        //String PORT = "3306";
+        //String username = "laurin_1";
+        //String DBNAME = "laurin_db1";
+        //String password = "yDeSn57NMdwnMk7C";
         //String url = false ? "jdbc:mysql://u33515_X8lzuzNisT:sdK8uQdT3tL7KsAg%5Ej%2BYb%5E!D@161.97.78.70:3306/s33515_SaS-RESTFUL-API" : "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
         String url = "";
         try {
@@ -52,7 +51,7 @@ public class MySQLConnectionHandler {
                 return this.connection.isValid(5);
             }
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            SkyLogger.logStack(exception);
         }
         return false;
     }

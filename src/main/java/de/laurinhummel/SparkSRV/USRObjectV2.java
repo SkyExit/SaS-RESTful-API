@@ -2,11 +2,11 @@ package de.laurinhummel.SparkSRV;
 
 //ICH HABE PLÄNE h
 public class USRObjectV2 {
-    private int id;
-    private String validation;
-    private String name;
+    private final int id;
+    private final String validation;
+    private final String name;
     private int money;
-    private int priority;
+    private final int priority;
 
     public USRObjectV2(int id, String validation, String name, int money, int priority) {
         this.id = id;

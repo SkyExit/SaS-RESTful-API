@@ -3,6 +3,7 @@ package de.laurinhummel.SparkSRV.paths;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
@@ -19,7 +20,7 @@ public class GetUsers implements Route {
     public GetUsers(MySQLConnectionHandler handler) { this.handler = handler; }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handle(Request request, Response response) {
         String auth = request.headers("Authentication");
         if(auth == null || !auth.equals(Main.APITOKEN)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
@@ -48,7 +49,7 @@ public class GetUsers implements Route {
             preparedStatement.close();
             return JRepCrafter.successOperation(response, 200).put("users", ja);
         } catch (SQLException e) {
-            e.printStackTrace();
+            SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
         }
     }

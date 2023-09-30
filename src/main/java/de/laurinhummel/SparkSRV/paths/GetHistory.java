@@ -3,6 +3,7 @@ package de.laurinhummel.SparkSRV.paths;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
@@ -26,7 +27,7 @@ public class GetHistory implements Route {
         Main.createTransactions(connection);
 
         String searchParameter = request.params(":validation") == null ? "" : request.params(":validation");
-        String sqlArgs = "";
+        String sqlArgs;
 
         if(searchParameter.isBlank()) {
             sqlArgs = "SELECT * FROM sas_transactions_v2 ORDER BY date DESC";
@@ -60,7 +61,7 @@ public class GetHistory implements Route {
             preparedStatement.close();
             return JRepCrafter.successOperation(response, 200).put("transactions", ja);
         } catch (SQLException e) {
-            e.printStackTrace();
+            SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
         }
     }
