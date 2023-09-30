@@ -29,17 +29,20 @@ public class PostCreate implements Route {
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
-            String query = "insert into sas_wealth_v1 (validation, money, priority)"
-                    + " values (?, ?, ?)";
+            String query = "insert into sas_wealth_v2 (validation, name, money, priority)"
+                    + " values (?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
+            String name = request.queryParams("name") == null || request.queryParams("name").isBlank() ? "not set" : request.queryParams("name");
                 preparedStmt.setString(1, val);
-                preparedStmt.setString (2, "0");
-                preparedStmt.setString (3, "1");
+                preparedStmt.setString(2, name);
+                preparedStmt.setString (3, "0");
+                preparedStmt.setString (4, "1");
 
             preparedStmt.execute();
 
-            return JRepCrafter.cancelOperation(response, 201, "User created successfully").put("validationID", val);
+
+            return JRepCrafter.cancelOperation(response, 201, "User created successfully").put("validationID", val).put("name", name);
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());

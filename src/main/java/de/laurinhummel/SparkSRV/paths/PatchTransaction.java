@@ -25,7 +25,6 @@ public class PatchTransaction implements Route {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
-        response.type("application/json");
         Connection connection = handler.getConnection();
         Main.createTransactions(connection);
 
@@ -50,16 +49,18 @@ public class PatchTransaction implements Route {
 
         //FETCH BOTH USERS AND CHECK VALIDITY
         try {
-            String sqlArgs = "SELECT * FROM `sas_wealth_v1` WHERE `validation`='" + validationActive + "' OR `validation`='" + validationPassive + "' ORDER BY `priority` DESC";
-            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            String sqlArgs = "SELECT * FROM `sas_wealth_v2` WHERE `validation`='" + validationActive + "' OR `validation`='" + validationPassive + "' ORDER BY `priority` DESC";
+            Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery(sqlArgs);
 
+            /*
             rs.last();
             if(rs.getRow() != 2) {
                 return JRepCrafter.cancelOperation(response, 404, "Specified user(s) not found");
             }
+             */
 
-            rs.first();
+            if(rs.isBeforeFirst()) { rs.next(); }
             if(rs.getString("validation").equals(validationActive)) {
                 active = putDATA(rs);
                 rs.next();
@@ -94,8 +95,8 @@ public class PatchTransaction implements Route {
 
         //UPDATE MONEY ON DATABASE
         try {
-            connection.prepareStatement("UPDATE `sas_wealth_v1` SET `money`='" + active.getMoney() + "' WHERE `validation`='" + active.getValidation() + "'").execute();
-            connection.prepareStatement("UPDATE `sas_wealth_v1` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
+            connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + active.getMoney() + "' WHERE `validation`='" + active.getValidation() + "'").execute();
+            connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
             return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
@@ -103,20 +104,22 @@ public class PatchTransaction implements Route {
 
         //INSERTING DATA INTO BLOCKCHAIN
         try {
-            String query = "insert into sas_transactions_v1 (validation_active, validation_passive, money)"
+            String query = "insert into sas_transactions_v2 (validation_active, name_active, validation_passive, name_passive, money)"
                     + " values (?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
                 preparedStmt.setString(1, active.getValidation());
-                preparedStmt.setString (2, passive.getValidation());
-                preparedStmt.setString (3, String.valueOf(money));
+                preparedStmt.setString(2, active.getName());
+                preparedStmt.setString (3, passive.getValidation());
+                preparedStmt.setString(4, passive.getName());
+                preparedStmt.setString (5, String.valueOf(money));
 
             preparedStmt.execute();
 
             if(money > 0) {
-                Logger.getGlobal().log(Level.INFO, "'" + passive.getValidation() + "' moved " + money + "€ to '" + active.getValidation() + "'");
+                Logger.getGlobal().log(Level.INFO, "'" + passive.getName() + "' moved " + money + "€ to '" + active.getName() + "'");
             } else {
-                Logger.getGlobal().log(Level.INFO, "'" + active.getValidation() + "' moved " + (money*(-1)) + "€ to '" + passive.getValidation() + "'");
+                Logger.getGlobal().log(Level.INFO, "'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
             }
 
 
@@ -129,7 +132,7 @@ public class PatchTransaction implements Route {
     }
 
     private USRObjectV2 putDATA(ResultSet rs) throws SQLException {
-        return new USRObjectV2(rs.getInt("id"), rs.getString("validation"),
+        return new USRObjectV2(rs.getInt("id"), rs.getString("validation"), rs.getString("name"),
                 rs.getInt("money"), rs.getInt("priority"));
     }
 }

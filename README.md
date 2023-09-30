@@ -15,7 +15,9 @@ PatchTransaction: http://fi1.bot-hosting.net:5260/transaction
 }
 ```
 
-PostCreate: http://fi1.bot-hosting.net:5260/create?name=Hummel, Laurin
+name ist optional
+PostCreate: http://fi1.bot-hosting.net:5260/create?name=Hummel, Laurin      //name = Hummel, Laurin
+PostCreate: http://fi1.bot-hosting.net:5260/create                          //name = not set
 
 API-Key wird über den header übertragen:
 Authentication: KEY

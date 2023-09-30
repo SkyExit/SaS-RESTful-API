@@ -24,9 +24,7 @@ public class GetUser implements Route {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
-        response.type("application/json");
         String validationID;
-
         try {
             validationID = request.params(":validation");
         } catch (Exception ex) {
@@ -34,7 +32,7 @@ public class GetUser implements Route {
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
         }
 
-        String sqlArgs = "SELECT * FROM `sas_wealth_v1` WHERE `validation`='" + validationID + "'";
+        String sqlArgs = "SELECT * FROM `sas_wealth_v2` WHERE `validation`='" + validationID + "'";
 
         try {
             Connection connection = handler.getConnection();
@@ -50,6 +48,7 @@ public class GetUser implements Route {
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));
+                ja.put("name", rs.getString("name"));
                 ja.put("money", rs.getInt("money"));
                 ja.put("priority", rs.getInt("priority"));
             }
