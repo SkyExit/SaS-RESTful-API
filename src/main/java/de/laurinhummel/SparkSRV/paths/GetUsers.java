@@ -40,7 +40,7 @@ public class GetUsers implements Route {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
                         .put("validation", rs.getString("validation"))
-                        .put("name", rs.getString("name"))
+                        .put("name", rs.getString("name").equals("not set") ? JSONObject.NULL : rs.getString("name"))
                         .put("money", rs.getInt("money"))
                         .put("priority", rs.getInt("priority")));
             }

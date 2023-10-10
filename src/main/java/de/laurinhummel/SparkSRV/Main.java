@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
 
-        SkyLogger.log(Level.INFO, "Spark ignited");
+        SkyLogger.log(Level.INFO, "Spark has ignited");
 
         Spark.port(5260);
 
@@ -62,7 +62,7 @@ public class Main {
     public static void createWealth(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v2 (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name VARCHAR(50) DEFAULT NULL," +
+                "name VARCHAR(50) NOT NULL," +
                 "validation VARCHAR(10) NOT NULL," +
                 "money INTEGER NOT NULL," +
                 "priority INTEGER NOT NULL" + ")";
