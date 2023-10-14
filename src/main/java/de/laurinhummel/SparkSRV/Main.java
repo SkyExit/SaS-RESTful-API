@@ -1,5 +1,6 @@
 package de.laurinhummel.SparkSRV;
 
+import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;
@@ -25,7 +26,7 @@ public class Main {
             res.type("application/json");
         });
 
-        Spark.options("/*", (req, res) -> {
+        Spark.options("*/*", (req, res) -> {
             String accessControlRequestHeaders = req.headers("Access-Control-Request-Headers");
             if (accessControlRequestHeaders != null) {
                 res.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
@@ -55,14 +56,19 @@ public class Main {
         Spark.get("/history/:validation/", new GetHistory(handler));
         Spark.get("/history", new GetHistory(handler));
         Spark.get("/history/", new GetHistory(handler));
+
+        Spark.patch("/employee", new PatchEmployee(handler));
+        Spark.patch("/employee/", new PatchEmployee(handler));
     }
 
-    public static final String APITOKEN = "40263hv-0824ff933a-4014ff9345-d7c0402";
+    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v1"};
+
+    public static String APIKEY = "40263hv-0824ff933a-4014ff9345-d7c0402";
 
     public static void createWealth(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v2 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v3 (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name VARCHAR(50) NOT NULL," +
+                "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(10) NOT NULL," +
                 "money INTEGER NOT NULL," +
                 "priority INTEGER NOT NULL" + ")";
@@ -73,14 +79,27 @@ public class Main {
     }
 
     public static void createTransactions(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_transactions_v2 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_transactions_v3 (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "validation_active VARCHAR(10) NOT NULL," +
                 "name_active VARCHAR(50) NOT NULL," +
                 "validation_passive VARCHAR(10)," +
-                "name_passive VARCHAR(50) NOT NULL," +
+                "name_passive VARCHAR(50) DEFAULT NULL," +
                 "money INTEGER NOT NULL" + ")";
+
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+    }
+
+    public static void createEmployee(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_employee_v1 (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "validation_enterprise VARCHAR(10) NOT NULL," +
+                "validation_employee VARCHAR(10) NOT NULL," +
+                "employed BOOLEAN DEFAULT TRUE"
+                + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);

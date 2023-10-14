@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class GetUser implements Route {
     MySQLConnectionHandler handler;
@@ -21,7 +22,7 @@ public class GetUser implements Route {
     @Override
     public Object handle(Request request, Response response) {
         String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APITOKEN)) {
+        if(auth == null || !auth.equals(Main.APIKEY)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
@@ -33,7 +34,7 @@ public class GetUser implements Route {
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
         }
 
-        String sqlArgs = "SELECT * FROM `sas_wealth_v2` WHERE `validation`='" + validationID + "'";
+        String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation`='" + validationID + "'";
 
         try {
             Connection connection = handler.getConnection();
@@ -49,7 +50,7 @@ public class GetUser implements Route {
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));
-                ja.put("name", rs.getString("name").equals("not set") ? JSONObject.NULL : rs.getString("name"));
+                ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
                 ja.put("money", rs.getInt("money"));
                 ja.put("priority", rs.getInt("priority"));
             }
@@ -58,6 +59,7 @@ public class GetUser implements Route {
 
             rs.close();
             preparedStatement.close();
+            SkyLogger.log(Level.INFO, "User data fetched for " + validationID);
             return jo;
         } catch (SQLException e) {
             SkyLogger.logStack(e);

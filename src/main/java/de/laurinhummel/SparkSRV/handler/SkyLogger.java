@@ -12,9 +12,14 @@ public class SkyLogger {
     }
 
     public static void logStack(Throwable ex) {
+        ex.printStackTrace();
+        /*
         String message = ex.getMessage();
-        StackTraceElement[] stack = ex.getStackTrace();
+        String msg = ex.toString();
+        Throwable stack = ex.fillInStackTrace();
 
-        logger.log(Level.WARNING, message + "\n" + Arrays.toString(stack));
+        logger.log(Level.WARNING, message + "\n" + msg + "\n" + stack);
+        */
+
     }
 }

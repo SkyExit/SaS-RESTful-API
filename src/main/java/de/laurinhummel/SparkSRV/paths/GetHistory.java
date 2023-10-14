@@ -11,6 +11,7 @@ import spark.Response;
 import spark.Route;
 
 import java.sql.*;
+import java.util.logging.Level;
 
 public class GetHistory implements Route {
     MySQLConnectionHandler handler;
@@ -19,20 +20,19 @@ public class GetHistory implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APITOKEN)) {
+        if(auth == null || !auth.equals(Main.APIKEY)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
         Connection connection = handler.getConnection();
-        Main.createTransactions(connection);
 
         String searchParameter = request.params(":validation") == null ? "" : request.params(":validation");
         String sqlArgs;
 
         if(searchParameter.isBlank()) {
-            sqlArgs = "SELECT * FROM sas_transactions_v2 ORDER BY date DESC";
+            sqlArgs = "SELECT * FROM " + Main.names[1] + " ORDER BY date DESC";
         } else {
-            sqlArgs = "SELECT * FROM sas_transactions_v2 WHERE validation_active='" + searchParameter + "' OR validation_passive='" + searchParameter + "' ORDER BY date DESC";
+            sqlArgs = "SELECT * FROM " + Main.names[1] + " WHERE validation_active='" + searchParameter + "' OR validation_passive='" + searchParameter + "' ORDER BY date DESC";
         }
         try {
             Main.createWealth(connection);
@@ -59,6 +59,7 @@ public class GetHistory implements Route {
 
             rs.close();
             preparedStatement.close();
+            SkyLogger.log(Level.INFO, "Fetched transaction history for " + (searchParameter.isBlank() ? "global" : searchParameter));
             return JRepCrafter.successOperation(response, 200).put("transactions", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);

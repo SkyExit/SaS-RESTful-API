@@ -1,5 +1,7 @@
 package de.laurinhummel.SparkSRV.handler;
 
+import de.laurinhummel.SparkSRV.Main;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -39,10 +41,17 @@ public class MySQLConnectionHandler {
         try {
             connection = DriverManager.getConnection(url);
             System.out.println("Database connected!");
+            createDatabases(connection);
             return connection;
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot connect the database!", e);
         }
+    }
+
+    private void createDatabases(Connection connection) throws SQLException {
+        Main.createWealth(connection);
+        Main.createTransactions(connection);
+        Main.createEmployee(connection);
     }
 
     public boolean isConnected() {

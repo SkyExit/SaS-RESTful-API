@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class GetUsers implements Route {
     MySQLConnectionHandler handler;
@@ -22,14 +23,13 @@ public class GetUsers implements Route {
     @Override
     public Object handle(Request request, Response response) {
         String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APITOKEN)) {
+        if(auth == null || !auth.equals(Main.APIKEY)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
-        String sqlArgs = "SELECT * FROM `sas_wealth_v2` ORDER BY id ASC";
+        String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` ORDER BY id ASC";
         try {
             Connection connection = handler.getConnection();
-                Main.createWealth(connection);
 
             PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
             ResultSet rs = preparedStatement.executeQuery();
@@ -40,13 +40,14 @@ public class GetUsers implements Route {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
                         .put("validation", rs.getString("validation"))
-                        .put("name", rs.getString("name").equals("not set") ? JSONObject.NULL : rs.getString("name"))
+                        .put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"))
                         .put("money", rs.getInt("money"))
                         .put("priority", rs.getInt("priority")));
             }
 
             rs.close();
             preparedStatement.close();
+            SkyLogger.log(Level.INFO, "User list fetched");
             return JRepCrafter.successOperation(response, 200).put("users", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);

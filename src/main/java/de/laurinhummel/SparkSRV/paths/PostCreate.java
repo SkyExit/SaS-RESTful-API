@@ -12,6 +12,7 @@ import spark.Route;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.logging.Level;
 
 public class PostCreate implements Route {
     MySQLConnectionHandler handler;
@@ -20,30 +21,30 @@ public class PostCreate implements Route {
     @Override
     public Object handle(Request request, Response response) {
         String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APITOKEN)) {
+        if(auth == null || !auth.equals(Main.APIKEY)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
         try {
             Connection connection = handler.getConnection();
-            Main.createWealth(connection);
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
-            String query = "insert into sas_wealth_v2 (validation, name, money, priority)"
+            String query = "insert into " + Main.names[0] + " (validation, name, money, priority)"
                     + " values (?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
-            String name = request.queryParams("name") == null || request.queryParams("name").isBlank() ? "not set" : request.queryParams("name");
+            String name = (request.queryParams("name") == null || request.queryParams("name").isBlank()) ? null : request.queryParams("name");
                 preparedStmt.setString(1, val);
                 preparedStmt.setString(2, name);
                 preparedStmt.setString (3, "0");
-                preparedStmt.setString (4, "1");
+                preparedStmt.setString (4, name == null ? "1" : "2");
 
             preparedStmt.execute();
 
 
-            return JRepCrafter.successOperation(response, 201).put("validationID", val).put("name", name).put("message", "User created successfully");
+            SkyLogger.log(Level.INFO, (name == null ? "User" : "Enterprise") + " created successfully");
+            return JRepCrafter.successOperation(response, 201).put("validationID", val).put("name", name).put("message", (name == null ? "User" : "Enterprise") + " created successfully");
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());

@@ -22,12 +22,11 @@ public class PatchTransaction implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APITOKEN)) {
+        if(auth == null || !auth.equals(Main.APIKEY)) {
             return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
         }
 
         Connection connection = handler.getConnection();
-        Main.createTransactions(connection);
 
         String validationActive;
         String validationPassive;
@@ -50,7 +49,7 @@ public class PatchTransaction implements Route {
 
         //FETCH BOTH USERS AND CHECK VALIDITY
         try {
-            String sqlArgs = "SELECT * FROM `sas_wealth_v2` WHERE `validation`='" + validationActive + "' OR `validation`='" + validationPassive + "' ORDER BY `priority` DESC";
+            String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation`='" + validationActive + "' OR `validation`='" + validationPassive + "' ORDER BY `priority` DESC";
             Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = statement.executeQuery(sqlArgs);
 
@@ -90,8 +89,8 @@ public class PatchTransaction implements Route {
 
         //UPDATE MONEY ON DATABASE
         try {
-            connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + active.getMoney() + "' WHERE `validation`='" + active.getValidation() + "'").execute();
-            connection.prepareStatement("UPDATE `sas_wealth_v2` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
+            connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`='" + active.getMoney() + "' WHERE `validation`='" + active.getValidation() + "'").execute();
+            connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`='" + passive.getMoney() + "' WHERE `validation`='" + passive.getValidation() + "'").execute();
         } catch (SQLException ex) {
             SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
@@ -99,7 +98,7 @@ public class PatchTransaction implements Route {
 
         //INSERTING DATA INTO BLOCKCHAIN
         try {
-            String query = "insert into sas_transactions_v2 (validation_active, name_active, validation_passive, name_passive, money)"
+            String query = "insert into " + Main.names[1] + " (validation_active, name_active, validation_passive, name_passive, money)"
                     + " values (?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
@@ -112,9 +111,9 @@ public class PatchTransaction implements Route {
             preparedStmt.execute();
 
             if(money > 0) {
-                Logger.getGlobal().log(Level.INFO, "'" + passive.getName() + "' moved " + money + "€ to '" + active.getName() + "'");
+                SkyLogger.log(Level.INFO, "'" + passive.getName() + "' moved " + money + "€ to '" + active.getName() + "'");
             } else {
-                Logger.getGlobal().log(Level.INFO, "'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
+                SkyLogger.log(Level.INFO, "'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
             }
 
 
