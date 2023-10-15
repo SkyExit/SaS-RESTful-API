@@ -34,6 +34,7 @@ public class GetHistory implements Route {
         } else {
             sqlArgs = "SELECT * FROM " + Main.names[1] + " WHERE validation_active='" + searchParameter + "' OR validation_passive='" + searchParameter + "' ORDER BY date DESC";
         }
+
         try {
             Main.createWealth(connection);
 

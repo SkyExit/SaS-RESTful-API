@@ -49,7 +49,7 @@ public class PatchEmployee implements Route {
         //FETCH USER
         try {
             HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/users/" + validationEmployee).openConnection();
-                urlConnection.setRequestProperty("Authentication", "40263hv-0824ff933a-4014ff9345-d7c0402");
+                urlConnection.setRequestProperty("Authentication", Main.APIKEY);
             if(urlConnection.getResponseCode() != 200) {
                 return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
             }

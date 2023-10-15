@@ -59,6 +59,11 @@ public class Main {
 
         Spark.patch("/employee", new PatchEmployee(handler));
         Spark.patch("/employee/", new PatchEmployee(handler));
+
+        Spark.get("/enterprise/:validation", new GetEnterprise(handler));
+        Spark.get("/enterprise/:validation/", new GetEnterprise(handler));
+        Spark.get("/enterprise", new GetEnterprise(handler));
+        Spark.get("/enterprise/", new GetEnterprise(handler));
     }
 
     public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v1"};
