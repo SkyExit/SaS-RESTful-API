@@ -72,7 +72,6 @@ public class GetEnterprise implements Route {
                     Map<String, Map<String, Boolean>> map = new HashMap<String, Map<String, Boolean>>();
 
                     while(rs.next()) {
-                        SkyLogger.log(Level.INFO, rs.getString("validation_employee"));
                         try {
                             if(map.containsKey(rs.getString("validation_enterprise"))) {
                                 map.get(rs.getString("validation_enterprise")).put(rs.getString("validation_employee"), rs.getBoolean("employed"));

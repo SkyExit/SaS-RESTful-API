@@ -1,6 +1,5 @@
 package de.laurinhummel.SparkSRV;
 
-import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;

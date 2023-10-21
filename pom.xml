@@ -6,7 +6,7 @@
 
     <groupId>de.laurinhummel</groupId>
     <artifactId>SparkSRV</artifactId>
-    <version>0.9.16-BETA</version>
+    <version>0.9.17-BETA</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
