@@ -3,6 +3,7 @@ package de.laurinhummel.SparkSRV.paths;
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,10 +29,7 @@ public class GetEnterprise implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APIKEY)) {
-            return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
-        }
+        if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
 
         Connection connection = handler.getConnection();
 
@@ -43,11 +41,7 @@ public class GetEnterprise implements Route {
             sqlArgs = "SELECT * FROM " + Main.names[2] + " ORDER BY id DESC";
         } else {
             try {
-                HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/users/" + searchParameter).openConnection();
-                urlConnection.setRequestProperty("Authentication", Main.APIKEY);
-                if(urlConnection.getResponseCode() != 200) { return JRepCrafter.cancelOperation(response, 404, "Specified user not found"); }
-                InputStream inputStream = urlConnection.getInputStream();
-                JSONObject userData = new JSONObject(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+                JSONObject userData = handler.requestGetApi(response, "users", searchParameter);
                 priority = userData.getJSONObject("user").getInt("priority");
             } catch (Exception ex) {
                 SkyLogger.logStack(ex);

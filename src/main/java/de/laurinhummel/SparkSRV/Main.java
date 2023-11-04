@@ -1,8 +1,12 @@
 package de.laurinhummel.SparkSRV;
 
+import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;
+import org.json.JSONObject;
+import spark.Request;
+import spark.Response;
 import spark.Spark;
 
 import java.sql.*;
@@ -63,6 +67,12 @@ public class Main {
         Spark.get("/enterprise/:validation/", new GetEnterprise(handler));
         Spark.get("/enterprise", new GetEnterprise(handler));
         Spark.get("/enterprise/", new GetEnterprise(handler));
+        
+        Spark.get("/test", new GetTest(handler));
+        Spark.get("/test/", new GetTest(handler));
+
+        Spark.get("/login", new GetLogin(handler));
+        Spark.get("/login/", new GetLogin(handler));
     }
 
     public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v1"};

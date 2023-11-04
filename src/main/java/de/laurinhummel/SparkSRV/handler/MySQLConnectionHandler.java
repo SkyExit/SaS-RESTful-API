@@ -1,8 +1,14 @@
 package de.laurinhummel.SparkSRV.handler;
 
 import de.laurinhummel.SparkSRV.Main;
+import org.json.JSONObject;
+import spark.Response;
+import spark.Spark;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -71,5 +77,18 @@ public class MySQLConnectionHandler {
         } else {
             return connect();
         }
+    }
+
+    public JSONObject requestGetApi(Response response, String path, String args) {
+        try {
+            HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/" + path + "/" + args).openConnection();
+            urlConnection.setRequestProperty("Authentication", Main.APIKEY);
+            if(urlConnection.getResponseCode() != 200) { return JRepCrafter.cancelOperation(response, 404, "Specified user not found - handler"); }
+            InputStream inputStream = urlConnection.getInputStream();
+            return new JSONObject(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            SkyLogger.logStack(e);
+        }
+        return null;
     }
 }

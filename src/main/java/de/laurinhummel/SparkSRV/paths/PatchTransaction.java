@@ -4,6 +4,7 @@ import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.USRObjectV2;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
+import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,10 +22,7 @@ public class PatchTransaction implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String auth = request.headers("Authentication");
-        if(auth == null || !auth.equals(Main.APIKEY)) {
-            return JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
-        }
+        if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
 
         Connection connection = handler.getConnection();
 
