@@ -5,14 +5,23 @@ import org.json.JSONObject;
 import spark.Response;
 import spark.Spark;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.logging.Level;
 
 public class MySQLConnectionHandler {
     private Connection connection = null;
@@ -79,15 +88,47 @@ public class MySQLConnectionHandler {
         }
     }
 
+    private static TrustManager[] trustAllCerts = new TrustManager[]{
+            new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+            }
+    };
+
     public JSONObject requestGetApi(Response response, String path, String args) {
         try {
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/" + path + "/" + args).openConnection();
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+            HostnameVerifier allHostsValid = (hostname, session) -> true;
+
+            HttpsURLConnection urlConnection = (HttpsURLConnection) new URL("https://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/" + path + "/" + args).openConnection();
             urlConnection.setRequestProperty("Authentication", Main.APIKEY);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setHostnameVerifier(allHostsValid);
+            urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             if(urlConnection.getResponseCode() != 200) { return JRepCrafter.cancelOperation(response, 404, "Specified user not found - handler"); }
             InputStream inputStream = urlConnection.getInputStream();
-            return new JSONObject(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+
+            String json = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            SkyLogger.log(Level.INFO, json);
+
+            return new JSONObject(json);
         } catch (IOException e) {
             SkyLogger.logStack(e);
+        } catch (NoSuchAlgorithmException e) {
+            SkyLogger.logStack(e);
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }

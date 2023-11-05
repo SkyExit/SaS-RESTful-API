@@ -37,7 +37,16 @@ public class PostLogin implements Route {
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
         }
 
-        JSONObject user = handler.requestGetApi(response, "users", validation);
+        JSONObject user = null;
+        SkyLogger.log("1");
+        try {
+            user = handler.requestGetApi(response, "users", validation);
+        } catch (Exception ex) {
+            SkyLogger.logStack(ex);
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
+        }
+
+        SkyLogger.log("2");
 
         if(user.getInt("status") != 200) {
             return JRepCrafter.cancelOperation(response, 404, "Specified user not found").put("token", JSONObject.NULL).put("creation", JSONObject.NULL);

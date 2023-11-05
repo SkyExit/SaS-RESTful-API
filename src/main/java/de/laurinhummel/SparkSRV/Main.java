@@ -16,6 +16,12 @@ public class Main {
 
         Spark.port(5260);
 
+        try {
+            Spark.secure("keystore/KeyStore.jks", "QMS3ti9xvjqR", null, null);
+        } catch (Exception ex) {
+            SkyLogger.logStack(ex);
+        }
+
         Spark.staticFiles.location("/assets");
         Spark.staticFiles.header("Access-Control-Allow-Origin", "*");
 

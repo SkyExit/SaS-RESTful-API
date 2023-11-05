@@ -10,6 +10,9 @@ public class SkyLogger {
     public static void log(Level level, String message) {
         logger.log(level, message);
     }
+    public static void log(String message) {
+        logger.log(Level.INFO, message);
+    }
 
     public static void logStack(Throwable ex) {
         ex.printStackTrace();
