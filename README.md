@@ -34,7 +34,7 @@ GetEnterprise: http://fi1.bot-hosting.net:5260/enterprise/ --> Alle Unternehmen 
 GetEnterprise: http://fi1.bot-hosting.net:5260/enterprise/userValID --> Alle Unternehmen, die diese Person beschäftigen<br>
 GetEnterprise: http://fi1.bot-hosting.net:5260/enterprise/enterpriseValID --> Spezielles Unternehmen mit ihren Mitarbeitern
 <br><br><br>
-GetLogin: http://fi1.bot-hosting.net:5260/login/
+PostLogin: http://fi1.bot-hosting.net:5260/login/
 ```
 {
 	"validation": "q6DCEc2xX1s"

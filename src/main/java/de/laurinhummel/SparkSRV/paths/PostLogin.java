@@ -15,9 +15,9 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.logging.Level;
 
-public class GetLogin implements Route {
+public class PostLogin implements Route {
     MySQLConnectionHandler handler;
-    public GetLogin(MySQLConnectionHandler handler) { this.handler = handler; }
+    public PostLogin(MySQLConnectionHandler handler) { this.handler = handler; }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
