@@ -20,18 +20,7 @@ public class GetUser implements Route {
     MySQLConnectionHandler handler;
     public GetUser(MySQLConnectionHandler handler) { this.handler = handler; }
 
-    @Override
-    public Object handle(Request request, Response response) {
-        if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
-
-        String validationID;
-        try {
-            validationID = request.params(":validation");
-        } catch (Exception ex) {
-            SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
-        }
-
+    public static JSONObject getUserData(String validationID, MySQLConnectionHandler handler, Request request, Response response) {
         String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation`='" + validationID + "'";
 
         try {
@@ -40,7 +29,7 @@ public class GetUser implements Route {
             ResultSet rs = preparedStatement.executeQuery();
 
             JSONObject jo = new JSONObject();
-                jo.put("status", response.status());
+            jo.put("status", response.status());
             JSONObject ja = new JSONObject();
 
             if(!rs.next()) {
@@ -63,5 +52,20 @@ public class GetUser implements Route {
             SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
         }
+    }
+
+    @Override
+    public Object handle(Request request, Response response) {
+        if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
+
+        String validationID;
+        try {
+            validationID = request.params(":validation");
+        } catch (Exception ex) {
+            SkyLogger.logStack(ex);
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
+        }
+
+        return getUserData(validationID, handler, request, response);
     }
 }

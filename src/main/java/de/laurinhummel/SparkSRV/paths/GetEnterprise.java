@@ -41,7 +41,7 @@ public class GetEnterprise implements Route {
             sqlArgs = "SELECT * FROM " + Main.names[2] + " ORDER BY id DESC";
         } else {
             try {
-                JSONObject userData = handler.requestGetApi(response, "users", searchParameter);
+                JSONObject userData = GetUser.getUserData(searchParameter, handler, request, response);
                 priority = userData.getJSONObject("user").getInt("priority");
             } catch (Exception ex) {
                 SkyLogger.logStack(ex);

@@ -102,6 +102,7 @@ public class MySQLConnectionHandler {
             }
     };
 
+    /*
     public JSONObject requestGetApi(Response response, String path, String args) {
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
@@ -115,6 +116,7 @@ public class MySQLConnectionHandler {
             urlConnection.setRequestMethod("GET");
             urlConnection.setHostnameVerifier(allHostsValid);
             urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+            urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode() != 200) { return JRepCrafter.cancelOperation(response, 404, "Specified user not found - handler"); }
             InputStream inputStream = urlConnection.getInputStream();
 
@@ -132,4 +134,6 @@ public class MySQLConnectionHandler {
         }
         return null;
     }
+
+     */
 }
