@@ -2,6 +2,7 @@ package de.laurinhummel.SparkSRV.handler;
 
 import de.laurinhummel.SparkSRV.Main;
 import org.json.JSONObject;
+import spark.Request;
 import spark.Response;
 import spark.Spark;
 
@@ -17,9 +18,7 @@ import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -37,7 +36,7 @@ public class MySQLConnectionHandler {
         //String url = false ? "jdbc:mysql://u33515_X8lzuzNisT:sdK8uQdT3tL7KsAg%5Ej%2BYb%5E!D@161.97.78.70:3306/s33515_SaS-RESTFUL-API" : "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
         String url = "";
         try {
-            url = "jdbc:sqlite:"+ Path.of("./").toRealPath().resolve("database.db");
+            url = "jdbc:sqlite:"+ Path.of("./data/").toRealPath().resolve("database.db");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,6 +87,7 @@ public class MySQLConnectionHandler {
         }
     }
 
+    /*
     private static TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -102,7 +102,6 @@ public class MySQLConnectionHandler {
             }
     };
 
-    /*
     public JSONObject requestGetApi(Response response, String path, String args) {
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
@@ -134,6 +133,39 @@ public class MySQLConnectionHandler {
         }
         return null;
     }
-
      */
+
+    public JSONObject getUserData(String searchParameter, Request request, Response response) {
+        String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation` LIKE '%" + searchParameter + "'";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            JSONObject jo = new JSONObject();
+            jo.put("status", response.status());
+            JSONObject ja = new JSONObject();
+
+            if(!rs.next()) {
+                return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
+            } else {
+                ja.put("id", rs.getInt("id"));
+                ja.put("validation", rs.getString("validation"));
+                ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
+                ja.put("money", rs.getInt("money"));
+                ja.put("priority", rs.getInt("priority"));
+            }
+
+            jo.put("user", ja);
+
+            rs.close();
+            preparedStatement.close();
+            SkyLogger.log(Level.INFO, "User data fetched for " + searchParameter);
+            return jo;
+        } catch (SQLException e) {
+            SkyLogger.logStack(e);
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
+        }
+    }
 }

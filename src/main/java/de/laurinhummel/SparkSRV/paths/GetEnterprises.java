@@ -10,22 +10,16 @@ import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import spark.Spark;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.logging.Level;
 
-public class GetEnterprise implements Route {
+public class GetEnterprises implements Route {
     MySQLConnectionHandler handler;
-    public GetEnterprise(MySQLConnectionHandler handler) { this.handler = handler; }
+    public GetEnterprises(MySQLConnectionHandler handler) { this.handler = handler; }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
@@ -41,7 +35,7 @@ public class GetEnterprise implements Route {
             sqlArgs = "SELECT * FROM " + Main.names[2] + " ORDER BY id DESC";
         } else {
             try {
-                JSONObject userData = GetUser.getUserData(searchParameter, handler, request, response);
+                JSONObject userData = handler.getUserData(searchParameter, request, response);
                 priority = userData.getJSONObject("user").getInt("priority");
             } catch (Exception ex) {
                 SkyLogger.logStack(ex);

@@ -39,7 +39,7 @@ public class PostLogin implements Route {
 
         JSONObject user = null;
         try {
-            user = GetUser.getUserData(validation, handler, request, response);
+            user = handler.getUserData(validation, request, response);
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");

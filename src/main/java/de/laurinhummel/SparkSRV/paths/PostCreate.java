@@ -28,11 +28,18 @@ public class PostCreate implements Route {
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
+            while (handler.getUserData(val, request, response).getInt("status") == 200) {
+                val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
+            }
+
             String query = "insert into " + Main.names[0] + " (validation, name, money, priority)"
                     + " values (?, ?, ?, ?)";
 
+            boolean user = (request.queryParams("name") == null || request.queryParams("name").isBlank());
+            val = (user ? "USR" : "ENT") + "-" + val;
+
             PreparedStatement preparedStmt = connection.prepareStatement(query);
-            String name = (request.queryParams("name") == null || request.queryParams("name").isBlank()) ? null : request.queryParams("name");
+            String name = user ? null : request.queryParams("name");
                 preparedStmt.setString(1, val);
                 preparedStmt.setString(2, name);
                 preparedStmt.setString (3, "0");

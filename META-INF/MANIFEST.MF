@@ -1,14 +1,14 @@
 Manifest-Version: 1.0
 Main-Class: de.laurinhummel.SparkSRV.Main
-Class-Path: commons-lang3-3.13.0.jar javax.servlet-api-3.1.0.jar jetty-c
- lient-9.4.48.v20220622.jar jetty-http-9.4.48.v20220622.jar jetty-io-9.4
- .48.v20220622.jar jetty-security-9.4.48.v20220622.jar jetty-server-9.4.
- 48.v20220622.jar jetty-servlet-9.4.48.v20220622.jar jetty-util-9.4.48.v
- 20220622.jar jetty-util-ajax-9.4.48.v20220622.jar jetty-webapp-9.4.48.v
- 20220622.jar jetty-xml-9.4.48.v20220622.jar json-20230618.jar mysql-con
- nector-j-8.0.33.jar protobuf-java-3.21.9.jar slf4j-api-2.0.9.jar slf4j-
- simple-2.0.9.jar spark-core-2.9.4.jar sqlite-jdbc-3.43.0.0.jar websocke
- t-api-9.4.48.v20220622.jar websocket-client-9.4.48.v20220622.jar websoc
- ket-common-9.4.48.v20220622.jar websocket-server-9.4.48.v20220622.jar w
- ebsocket-servlet-9.4.48.v20220622.jar
+Class-Path: websocket-servlet-9.4.48.v20220622.jar websocket-common-9.4.
+ 48.v20220622.jar javax.servlet-api-3.1.0.jar websocket-api-9.4.48.v2022
+ 0622.jar commons-lang3-3.13.0.jar jetty-util-ajax-9.4.48.v20220622.jar 
+ protobuf-java-3.21.9.jar spark-core-2.9.4.jar jetty-servlet-9.4.48.v202
+ 20622.jar mysql-connector-j-8.0.33.jar jetty-client-9.4.48.v20220622.ja
+ r jetty-server-9.4.48.v20220622.jar jetty-http-9.4.48.v20220622.jar web
+ socket-server-9.4.48.v20220622.jar jetty-io-9.4.48.v20220622.jar slf4j-
+ api-1.7.25.jar jetty-webapp-9.4.48.v20220622.jar json-20230618.jar jett
+ y-util-9.4.48.v20220622.jar jetty-xml-9.4.48.v20220622.jar jetty-securi
+ ty-9.4.48.v20220622.jar websocket-client-9.4.48.v20220622.jar sqlite-jd
+ bc-3.43.0.0.jar
 

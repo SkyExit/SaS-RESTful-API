@@ -6,14 +6,20 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class GetTest implements Route {
+import java.sql.Connection;
+
+public class GetProducts implements Route {
     MySQLConnectionHandler handler;
-    public GetTest(MySQLConnectionHandler handler) { this.handler = handler; }
+    public GetProducts(MySQLConnectionHandler handler) { this.handler = handler; }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
+        if (SessionValidationHandler.validate(request)) {
+            return SessionValidationHandler.correct(response);
+        }
 
-        return "null 123";
+        Connection connection = handler.getConnection();
+
+        return true;
     }
 }
