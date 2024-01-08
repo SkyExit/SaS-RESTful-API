@@ -12,7 +12,6 @@ import spark.Response;
 import spark.Route;
 
 import java.sql.*;
-import java.util.logging.Level;
 
 public class GetHistory implements Route {
     MySQLConnectionHandler handler;
@@ -58,8 +57,8 @@ public class GetHistory implements Route {
 
             rs.close();
             preparedStatement.close();
-            SkyLogger.log(Level.INFO, "Fetched transaction history for " + (searchParameter.isBlank() ? "global" : searchParameter));
-            return JRepCrafter.successOperation(response, 200).put("transactions", ja);
+            SkyLogger.log("Fetched transaction history for " + (searchParameter.isBlank() ? "global" : searchParameter));
+            return JRepCrafter.cancelOperation(response, 200, null).put("transactions", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");

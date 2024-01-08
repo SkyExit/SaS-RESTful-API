@@ -13,7 +13,6 @@ import spark.Route;
 import java.sql.Connection;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.logging.Level;
 
 public class PostLogin implements Route {
     MySQLConnectionHandler handler;
@@ -52,7 +51,7 @@ public class PostLogin implements Route {
             String input = validation + "." + time;
             String encoded = Base64.getEncoder().encodeToString(input.getBytes());
 
-            SkyLogger.log(Level.INFO, "Fetched login data for " + validation);
+            SkyLogger.log("Fetched login data for " + validation);
             return JRepCrafter.cancelOperation(response, 200, "kp was du willst").put("token", encoded).put("creation", time);
         }
     }

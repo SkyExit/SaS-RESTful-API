@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 public class GetUsers implements Route {
     MySQLConnectionHandler handler;
@@ -45,8 +44,8 @@ public class GetUsers implements Route {
 
             rs.close();
             preparedStatement.close();
-            SkyLogger.log(Level.INFO, "User list fetched");
-            return JRepCrafter.successOperation(response, 200).put("users", ja);
+            SkyLogger.log("User list fetched");
+            return JRepCrafter.cancelOperation(response, 200, null).put("users", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");

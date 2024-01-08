@@ -10,15 +10,7 @@ import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import spark.Spark;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
 import java.sql.*;
-import java.util.logging.Level;
 
 public class PatchEmployee implements Route {
     MySQLConnectionHandler handler;
@@ -46,9 +38,8 @@ public class PatchEmployee implements Route {
 
         //FETCH USER
         try {
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + Spark.port() + "/users/" + validationEmployee).openConnection();
-                urlConnection.setRequestProperty("Authentication", Main.APIKEY);
-            if(urlConnection.getResponseCode() != 200) {
+            JSONObject employee = handler.getUserData(validationEmployee, request, response);
+            if(employee.getInt("status") != 200) {
                 return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
             }
         } catch (Exception ex) {
@@ -92,7 +83,7 @@ public class PatchEmployee implements Route {
             return JRepCrafter.cancelOperation(response, 500, "There was an error while parsing user data");
         }
 
-        SkyLogger.log(Level.INFO, validationEmployee + " changed status at " + validationEnterprise);
+        SkyLogger.log(validationEmployee + " changed status at " + validationEnterprise);
         return JRepCrafter.cancelOperation(response, 200, "Performing transaction was a success");
     }
 }

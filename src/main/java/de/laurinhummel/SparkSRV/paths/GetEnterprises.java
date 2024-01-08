@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
-import java.util.logging.Level;
 
 public class GetEnterprises implements Route {
     MySQLConnectionHandler handler;
@@ -38,8 +37,7 @@ public class GetEnterprises implements Route {
                 JSONObject userData = handler.getUserData(searchParameter, request, response);
                 priority = userData.getJSONObject("user").getInt("priority");
             } catch (Exception ex) {
-                SkyLogger.logStack(ex);
-                return JRepCrafter.cancelOperation(response, 500, "Error while parsing userdata");
+                return JRepCrafter.cancelOperation(response, 500, "Database is empty");
             }
 
             sqlArgs = switch (priority) {
@@ -109,7 +107,7 @@ public class GetEnterprises implements Route {
 
             rs.close();
             preparedStatement.close();
-            SkyLogger.log(Level.INFO, "Fetched enterprise register for " + (searchParameter.isBlank() ? "global" : searchParameter));
+            SkyLogger.log(SkyLogger.Level.INFO, "Fetched enterprise register for " + (searchParameter.isBlank() ? "global" : searchParameter));
 
             return JRepCrafter.successOperation(response, 200).put("data", ja).put("priority", priority);
         } catch (Exception e) {

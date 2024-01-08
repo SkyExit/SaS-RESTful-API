@@ -48,8 +48,8 @@ public class PostCreate implements Route {
             preparedStmt.execute();
 
 
-            SkyLogger.log(Level.INFO, (name == null ? "User" : "Enterprise") + " created successfully");
-            return JRepCrafter.successOperation(response, 201).put("validationID", val).put("name", name).put("message", (name == null ? "User" : "Enterprise") + " created successfully");
+            SkyLogger.log((name == null ? "User" : "Enterprise") + " created successfully");
+            return JRepCrafter.cancelOperation(response, 201, null).put("validationID", val).put("name", name).put("message", (name == null ? "User" : "Enterprise") + " created successfully");
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());

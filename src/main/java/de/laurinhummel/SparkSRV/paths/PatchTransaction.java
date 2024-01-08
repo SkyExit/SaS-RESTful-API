@@ -13,8 +13,6 @@ import spark.Response;
 import spark.Route;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PatchTransaction implements Route {
     MySQLConnectionHandler handler;
@@ -63,7 +61,6 @@ public class PatchTransaction implements Route {
             }
             if(rs.next()) { return JRepCrafter.cancelOperation(response, 406, "Too many users found in this request"); }
 
-            System.out.println(active.getPriority() + " " + passive.getPriority());
             if(active.getPriority() <= passive.getPriority()) {
                 return JRepCrafter.cancelOperation(response, 401, "You don't have permissions to perform this transaction");
             }
@@ -77,10 +74,8 @@ public class PatchTransaction implements Route {
 
         //MONEY VALIDITY CHECKER
         if(passive.getMoney() >= money) {
-            System.out.println("ac: " + active.getMoney() + "   pas: " + passive.getMoney());
             passive.setMoney(passive.getMoney() - money);
             active.setMoney(active.getMoney() + money);
-            System.out.println("ac: " + active.getMoney() + "   pas: " + passive.getMoney());
         } else {
             return JRepCrafter.cancelOperation(response, 403, "He doesn't have enough money for this purchase");
         }
@@ -109,9 +104,9 @@ public class PatchTransaction implements Route {
             preparedStmt.execute();
 
             if(money > 0) {
-                SkyLogger.log(Level.INFO, "'" + passive.getName() + "' moved " + money + "€ to '" + active.getName() + "'");
+                SkyLogger.log("'" + passive.getName() + "' moved " + money + "€ to '" + active.getName() + "'");
             } else {
-                SkyLogger.log(Level.INFO, "'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
+                SkyLogger.log("'" + active.getName() + "' moved " + (money*(-1)) + "€ to '" + passive.getName() + "'");
             }
 
 

@@ -6,13 +6,12 @@ import de.laurinhummel.SparkSRV.paths.*;
 import spark.Spark;
 
 import java.sql.*;
-import java.util.logging.Level;
 
 public class Main {
     public static void main(String[] args) {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
 
-        SkyLogger.log(Level.INFO, "Spark has ignited");
+        SkyLogger.log(SkyLogger.Level.INFO, "Spark has ignited");
 
         Spark.port(5260);
 

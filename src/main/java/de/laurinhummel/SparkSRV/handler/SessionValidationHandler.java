@@ -4,8 +4,6 @@ import de.laurinhummel.SparkSRV.Main;
 import spark.Request;
 import spark.Response;
 
-import java.util.logging.Level;
-
 public class SessionValidationHandler {
     private static SessionAccessTypes type;
 
