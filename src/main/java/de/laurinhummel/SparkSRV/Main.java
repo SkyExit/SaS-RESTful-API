@@ -79,8 +79,10 @@ public class Main {
         Spark.post("/login", new PostLogin(handler));
         Spark.post("/login/", new PostLogin(handler));
 
-        Spark.get("/products/:validation", new GetProducts(handler));
-        Spark.get("/products/:validation/", new GetProducts(handler));
+        Spark.get("/products/:enterprise/:product", new GetProducts(handler));
+        Spark.get("/products/:enterprise/:product/", new GetProducts(handler));
+        Spark.get("/products/:enterprise", new GetProducts(handler));
+        Spark.get("/products/:enterprise/", new GetProducts(handler));
         Spark.get("/products", new GetProducts(handler));
         Spark.get("/products/", new GetProducts(handler));
 
@@ -134,7 +136,7 @@ public class Main {
     }
 
     public static void createProducts(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_products_v2 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_products_v1 (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_product VARCHAR(20) NOT NULL," +
