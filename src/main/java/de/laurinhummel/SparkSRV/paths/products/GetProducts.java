@@ -1,4 +1,4 @@
-package de.laurinhummel.SparkSRV.paths;
+package de.laurinhummel.SparkSRV.paths.products;
 
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;

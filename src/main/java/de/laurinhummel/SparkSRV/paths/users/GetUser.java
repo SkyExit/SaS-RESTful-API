@@ -1,4 +1,4 @@
-package de.laurinhummel.SparkSRV.paths;
+package de.laurinhummel.SparkSRV.paths.users;
 
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;

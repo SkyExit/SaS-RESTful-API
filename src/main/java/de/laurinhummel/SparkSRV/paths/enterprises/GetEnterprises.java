@@ -1,4 +1,4 @@
-package de.laurinhummel.SparkSRV.paths;
+package de.laurinhummel.SparkSRV.paths.enterprises;
 
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.handler.JRepCrafter;

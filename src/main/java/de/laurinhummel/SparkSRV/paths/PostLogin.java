@@ -24,19 +24,11 @@ public class PostLogin implements Route {
 
         Connection connection = handler.getConnection();
 
-        String validation;
+        JSONObject body = JRepCrafter.getRequestBody(request, response);
+        if(response.status() != 200) return body;
 
-        //JSON REQUEST BODY VALIDATOR
-        try {
-            JSONObject body = new JSONObject(request.body());
-            validation = body.getString("validation");
-        } catch (JSONException ex) {
-            response.status(500);
-            SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
-        }
-
-        JSONObject user = null;
+        String validation = body.getString("validation");
+        JSONObject user;
         try {
             user = handler.getUserData(validation, request, response);
         } catch (Exception ex) {

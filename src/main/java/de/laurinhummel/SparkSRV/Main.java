@@ -3,6 +3,13 @@ package de.laurinhummel.SparkSRV;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;
+import de.laurinhummel.SparkSRV.paths.enterprises.GetEnterprises;
+import de.laurinhummel.SparkSRV.paths.enterprises.PatchEmployee;
+import de.laurinhummel.SparkSRV.paths.products.GetProducts;
+import de.laurinhummel.SparkSRV.paths.products.PatchProducts;
+import de.laurinhummel.SparkSRV.paths.users.GetUser;
+import de.laurinhummel.SparkSRV.paths.users.GetUsers;
+import de.laurinhummel.SparkSRV.paths.users.PostCreate;
 import spark.Spark;
 
 import java.sql.*;
@@ -76,6 +83,9 @@ public class Main {
         Spark.get("/products/:validation/", new GetProducts(handler));
         Spark.get("/products", new GetProducts(handler));
         Spark.get("/products/", new GetProducts(handler));
+
+        Spark.patch("/products", new PatchProducts(handler));
+        Spark.patch("/products/", new PatchProducts(handler));
     }
 
     public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v1", "sas_products_v1"};
@@ -116,6 +126,20 @@ public class Main {
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_employee VARCHAR(20) NOT NULL," +
                 "employed BOOLEAN DEFAULT TRUE"
+                + ")";
+
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+    }
+
+    public static void createProducts(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_products_v2 (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "validation_enterprise VARCHAR(20) NOT NULL," +
+                "validation_product VARCHAR(20) NOT NULL," +
+                "name_product VARCHAR(60) NOT NULL," +
+                "price INTEGER NOT NULL DEFAULT 0"
                 + ")";
 
         Statement stmt = conn.createStatement();

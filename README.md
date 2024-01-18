@@ -43,3 +43,5 @@ PostLogin: http://fi1.bot-hosting.net:5260/login/
 
 API-Key wird über den header übertragen: <br>
 Authentication: KEY
+
+s

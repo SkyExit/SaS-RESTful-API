@@ -2,7 +2,6 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/main/java/de/laurinhummel/SparkSRV/Main.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/main/java/de/laurinhummel/SparkSRV/paths/PostCreate.java" dialect="GenericSQL" />
     <file url="PROJECT" dialect="SQLite" />
   </component>
 </project>
