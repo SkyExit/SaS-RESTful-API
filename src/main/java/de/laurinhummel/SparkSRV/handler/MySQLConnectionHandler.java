@@ -4,29 +4,12 @@ import de.laurinhummel.SparkSRV.Main;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
-
-import java.io.IOException;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
-import java.util.stream.Stream;
 
 public class MySQLConnectionHandler {
     private Connection connection = null;
 
     public MySQLConnectionHandler() { }
-
-    private static Boolean isRunningInsideDocker() {
-
-        try (Stream< String > stream =
-                     Files.lines(Paths.get("/proc/1/cgroup"))) {
-            return stream.anyMatch(line -> line.contains("/docker"));
-        } catch (IOException e) {
-            return false;
-        }
-    }
 
     private Connection connect() {
         String HOSTNAME = "192.168.0.13";
@@ -106,6 +89,40 @@ public class MySQLConnectionHandler {
 
             if(!rs.next()) {
                 return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
+            } else {
+                ja.put("id", rs.getInt("id"));
+                ja.put("validation", rs.getString("validation"));
+                ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
+                ja.put("money", rs.getInt("money"));
+                ja.put("priority", rs.getInt("priority"));
+            }
+
+            jo.put("user", ja);
+
+            rs.close();
+            preparedStatement.close();
+            SkyLogger.log("User data fetched for " + searchParameter);
+            return jo;
+        } catch (SQLException e) {
+            SkyLogger.logStack(e);
+            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
+        }
+    }
+
+    public JSONObject getProduct(String searchParameter, Request request, Response response) {
+        String sqlArgs = "SELECT * FROM `" + Main.names[3] + "` WHERE `validation_product` LIKE '%" + searchParameter + "'";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            JSONObject jo = new JSONObject();
+            jo.put("status", response.status());
+            JSONObject ja = new JSONObject();
+
+            if(!rs.next()) {
+                return JRepCrafter.cancelOperation(response, 404, "Specified product not found");
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));

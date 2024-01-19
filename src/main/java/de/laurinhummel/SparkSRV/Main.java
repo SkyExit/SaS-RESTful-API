@@ -83,8 +83,6 @@ public class Main {
         Spark.get("/products/:enterprise/:product/", new GetProducts(handler));
         Spark.get("/products/:enterprise", new GetProducts(handler));
         Spark.get("/products/:enterprise/", new GetProducts(handler));
-        Spark.get("/products", new GetProducts(handler));
-        Spark.get("/products/", new GetProducts(handler));
 
         Spark.patch("/products", new PatchProducts(handler));
         Spark.patch("/products/", new PatchProducts(handler));

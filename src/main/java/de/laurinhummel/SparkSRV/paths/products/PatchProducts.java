@@ -6,7 +6,6 @@ import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
@@ -86,6 +85,11 @@ public class PatchProducts implements Route {
             }
         }
 
-        return true;
+        //EDIT PRODUCT DATA
+        if(val_product != null && Boolean.FALSE.equals(remove)) {
+
+        }
+
+        return JRepCrafter.cancelOperation(response, 500, "Fallout - PatchProducts");
     }
 }

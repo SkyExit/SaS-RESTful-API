@@ -4,7 +4,6 @@ import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
-import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
