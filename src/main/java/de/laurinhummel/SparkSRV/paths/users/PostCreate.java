@@ -13,7 +13,6 @@ import spark.Route;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.logging.Level;
 
 public class PostCreate implements Route {
     MySQLConnectionHandler handler;

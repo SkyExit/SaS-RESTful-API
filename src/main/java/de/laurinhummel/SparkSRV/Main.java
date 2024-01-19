@@ -96,7 +96,7 @@ public class Main {
 
     public static void createWealth(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v3 (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(20) NOT NULL," +
                 "money INTEGER NOT NULL," +
@@ -109,7 +109,7 @@ public class Main {
 
     public static void createTransactions(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_transactions_v3 (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "validation_active VARCHAR(20) NOT NULL," +
                 "name_active VARCHAR(50) NOT NULL," +
@@ -124,7 +124,7 @@ public class Main {
 
     public static void createEmployee(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_employee_v1 (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_employee VARCHAR(20) NOT NULL," +
                 "employed BOOLEAN DEFAULT TRUE"
@@ -137,7 +137,7 @@ public class Main {
 
     public static void createProducts(Connection conn) throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_products_v1 (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_product VARCHAR(20) NOT NULL," +
                 "name_product VARCHAR(60) NOT NULL," +

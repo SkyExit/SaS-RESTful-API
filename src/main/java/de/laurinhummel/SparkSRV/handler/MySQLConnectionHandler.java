@@ -7,28 +7,34 @@ import spark.Response;
 
 import java.io.IOException;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.util.stream.Stream;
 
 public class MySQLConnectionHandler {
     private Connection connection = null;
 
     public MySQLConnectionHandler() { }
 
-    private Connection connect() {
-        //String HOSTNAME = "sql229.your-server.de";
-        //String PORT = "3306";
-        //String username = "laurin_1";
-        //String DBNAME = "laurin_db1";
-        //String password = "yDeSn57NMdwnMk7C";
-        //String url = false ? "jdbc:mysql://u33515_X8lzuzNisT:sdK8uQdT3tL7KsAg%5Ej%2BYb%5E!D@161.97.78.70:3306/s33515_SaS-RESTFUL-API" : "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
-        String url = "";
-        try {
-            url = "jdbc:sqlite:"+ Path.of("./data/").toRealPath().resolve("database.db");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private static Boolean isRunningInsideDocker() {
 
+        try (Stream< String > stream =
+                     Files.lines(Paths.get("/proc/1/cgroup"))) {
+            return stream.anyMatch(line -> line.contains("/docker"));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private Connection connect() {
+        String HOSTNAME = "192.168.0.13";
+        String PORT = "3306";
+        String username = "laurin";
+        String DBNAME = "database";
+        String password = "password";
+        String url = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
 
         System.out.println("Loading driver...");
         try {
@@ -41,12 +47,22 @@ public class MySQLConnectionHandler {
         System.out.println("Database: " + url);
         System.out.println("Connecting database...");
         try {
-            connection = DriverManager.getConnection(url);
+            DriverManager.setLoginTimeout(7);
+            connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connected!");
             createDatabases(connection);
             return connection;
         } catch (SQLException e) {
-            throw new IllegalStateException("Cannot connect the database!", e);
+            try {
+                System.out.println("Connecting Docker database...");
+                connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.2" + ":" + PORT + "/" + DBNAME, username, password);
+                System.out.println("Database connected!");
+                createDatabases(connection);
+                return connection;
+            } catch (SQLException ex) {
+                SkyLogger.logStack(ex);
+                throw new IllegalStateException("Cannot connect the database!", ex);
+            }
         }
     }
 

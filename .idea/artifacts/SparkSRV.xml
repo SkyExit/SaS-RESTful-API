@@ -25,12 +25,15 @@
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-io:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-webapp:9.4.48.v20220622" />
-      <element id="library" level="project" name="Maven: org.json:json:20230618" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-util:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-xml:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-security:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.48.v20220622" />
       <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.43.0.0" />
+      <element id="directory" name="data">
+        <element id="file-copy" path="$PROJECT_DIR$/data/KeyStore.jks" />
+      </element>
+      <element id="library" level="project" name="Maven: org.json:json:20231013" />
     </root>
   </artifact>
 </component>
