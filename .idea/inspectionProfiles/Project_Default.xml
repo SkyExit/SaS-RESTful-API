@@ -12,5 +12,23 @@
         <header value="jetty-http-9.4.48.v20220622.jar jetty-io-9.4.48.v20220622.jar" />
       </option>
     </inspection_tool>
+    <inspection_tool class="VulnerableLibrariesLocal" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="isIgnoringEnabled" value="true" />
+      <option name="ignoredModules">
+        <list>
+          <option value="SparkSRV" />
+        </list>
+      </option>
+      <option name="ignoredPackages">
+        <list>
+          <option value="org.eclipse.jetty:jetty-http:9.4.48.v20220622" />
+        </list>
+      </option>
+      <option name="ignoredReasons">
+        <list>
+          <option value="Not exploitable" />
+        </list>
+      </option>
+    </inspection_tool>
   </profile>
 </component>

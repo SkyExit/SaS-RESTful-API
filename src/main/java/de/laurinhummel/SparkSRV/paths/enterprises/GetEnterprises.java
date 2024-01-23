@@ -81,7 +81,7 @@ public class GetEnterprises implements Route {
                                     .put("employed", member.getValue()));
                         }
 
-                        ja.put(new JSONObject().put("name", entry.getKey())
+                        ja.put(new JSONObject().put("enterprise", entry.getKey())
                                 .put("members", array));
                     }
                 }
