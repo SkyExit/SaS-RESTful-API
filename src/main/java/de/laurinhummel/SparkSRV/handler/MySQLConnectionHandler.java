@@ -125,17 +125,17 @@ public class MySQLConnectionHandler {
                 return JRepCrafter.cancelOperation(response, 404, "Specified product not found");
             } else {
                 ja.put("id", rs.getInt("id"));
-                ja.put("validation", rs.getString("validation"));
-                ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
-                ja.put("money", rs.getInt("money"));
-                ja.put("priority", rs.getInt("priority"));
+                ja.put("validation_enterprise", rs.getString("validation_enterprise"));
+                ja.put("validation_product", rs.getString("validation_product"));
+                ja.put("name_product", rs.getString("name_product"));
+                ja.put("price", rs.getInt("price"));
             }
 
-            jo.put("user", ja);
+            jo.put("product", ja);
 
             rs.close();
             preparedStatement.close();
-            SkyLogger.log("User data fetched for " + searchParameter);
+            SkyLogger.log("Product data fetched for " + searchParameter);
             return jo;
         } catch (SQLException e) {
             SkyLogger.logStack(e);

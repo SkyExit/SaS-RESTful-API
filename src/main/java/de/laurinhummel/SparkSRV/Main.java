@@ -12,13 +12,19 @@ import de.laurinhummel.SparkSRV.paths.users.GetUsers;
 import de.laurinhummel.SparkSRV.paths.users.PostCreate;
 import spark.Spark;
 
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         MySQLConnectionHandler handler = new MySQLConnectionHandler();
 
+        final Properties properties = new Properties();
+        properties.load(Main.class.getClassLoader().getResourceAsStream("project.properties"));
+
         SkyLogger.log(SkyLogger.Level.INFO, "Spark has ignited");
+        SkyLogger.log(SkyLogger.Level.INFO, "Version: " + properties.getProperty("version"));
 
         Spark.port(5260);
 
@@ -83,6 +89,8 @@ public class Main {
         Spark.get("/products/:enterprise/:product/", new GetProducts(handler));
         Spark.get("/products/:enterprise", new GetProducts(handler));
         Spark.get("/products/:enterprise/", new GetProducts(handler));
+        Spark.get("/products", new GetProducts(handler));
+        Spark.get("/products/", new GetProducts(handler));
 
         Spark.patch("/products", new PatchProducts(handler));
         Spark.patch("/products/", new PatchProducts(handler));
