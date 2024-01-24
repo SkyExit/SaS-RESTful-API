@@ -50,6 +50,7 @@ public class GetProducts implements Route {
                 //MAP -> Enterprise + JSONArray
                 Map<String, JSONArray> map = new HashMap<>();
                 JSONObject register = new JSONObject();
+                JSONArray reg = new JSONArray();
 
                 while(rs.next()) {
                     try {
@@ -74,10 +75,10 @@ public class GetProducts implements Route {
                 }
 
                 for (Map.Entry<String, JSONArray> entry : map.entrySet()) {
-                    register.put(entry.getKey(), entry.getValue());
+                    reg.put(entry.getValue());
                 }
 
-                return JRepCrafter.cancelOperation(response, 200, "Fetched all products").put("products", register);
+                return JRepCrafter.cancelOperation(response, 200, "Fetched all products").put("products", reg);
             } else if(productID == null) {
                 //LIST ALL PRODUCTS OF ENTERPRISE
 
