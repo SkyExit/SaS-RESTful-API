@@ -75,6 +75,7 @@ public class GetProducts implements Route {
                 }
 
                 for (Map.Entry<String, JSONArray> entry : map.entrySet()) {
+                    //register.put(entry.getKey(), entry.getValue());
                     reg.put(entry.getValue());
                 }
 

@@ -29,7 +29,7 @@ public class Main {
         Spark.port(5260);
 
         try {
-            Spark.secure("data/KeyStore.jks", "QMS3ti9xvjqR", null, null);
+            //Spark.secure("data/KeyStore.jks", "QMS3ti9xvjqR", null, null);
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
         }
