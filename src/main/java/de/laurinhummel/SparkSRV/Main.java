@@ -28,11 +28,13 @@ public class Main {
 
         Spark.port(5260);
 
+        /*
         try {
-            //Spark.secure("data/KeyStore.jks", "QMS3ti9xvjqR", null, null);
+            Spark.secure("data/KeyStore.jks", "QMS3ti9xvjqR", null, null);
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
         }
+         */
 
         Spark.staticFiles.location("/assets");
         Spark.staticFiles.header("Access-Control-Allow-Origin", "*");
@@ -96,12 +98,12 @@ public class Main {
         Spark.patch("/products/", new PatchProducts(handler));
     }
 
-    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v1", "sas_products_v1"};
+    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
 
     public static String APIKEY = "40263hv-0824ff933a-4014ff9345-d7c0402";
 
     public static void createWealth(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_wealth_v3 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[0] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(20) NOT NULL," +
@@ -114,7 +116,7 @@ public class Main {
     }
 
     public static void createTransactions(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_transactions_v3 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[1] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "validation_active VARCHAR(20) NOT NULL," +
@@ -129,12 +131,12 @@ public class Main {
     }
 
     public static void createEmployee(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_employee_v1 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[2] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_employee VARCHAR(20) NOT NULL," +
-                "employed BOOLEAN DEFAULT TRUE"
-                + ")";
+                "employed BOOLEAN DEFAULT TRUE," +
+                "salary INTEGER NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
@@ -142,13 +144,24 @@ public class Main {
     }
 
     public static void createProducts(Connection conn) throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS sas_products_v1 (" +
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[3] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_product VARCHAR(20) NOT NULL," +
                 "name_product VARCHAR(60) NOT NULL," +
-                "price INTEGER NOT NULL DEFAULT 0"
-                + ")";
+                "price INTEGER NOT NULL DEFAULT 0" + ")";
+
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+    }
+
+    public static void createLogin(Connection conn) throws SQLException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[4] + "(" +
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+                "validationID VARCHAR(20) NOT NULL," +
+                "password VARCHAR(20) NOT NULL," +
+                "enabled BOOLEAN DEFAULT TRUE" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);

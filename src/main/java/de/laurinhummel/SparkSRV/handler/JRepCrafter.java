@@ -20,6 +20,7 @@ public class JRepCrafter {
 
     public static JSONObject getRequestBody(Request request, Response response) {
         try {
+            response.status(200);
             return new JSONObject(request.body());
         } catch (JSONException ex) {
             response.status(500);

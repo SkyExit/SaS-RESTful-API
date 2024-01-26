@@ -54,6 +54,7 @@ public class MySQLConnectionHandler {
         Main.createTransactions(connection);
         Main.createEmployee(connection);
         Main.createProducts(connection);
+        Main.createLogin(connection);
     }
 
     public boolean isConnected() {
