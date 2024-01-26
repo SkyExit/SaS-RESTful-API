@@ -7,9 +7,7 @@ import de.laurinhummel.SparkSRV.paths.enterprises.GetEnterprises;
 import de.laurinhummel.SparkSRV.paths.enterprises.PatchEmployee;
 import de.laurinhummel.SparkSRV.paths.products.GetProducts;
 import de.laurinhummel.SparkSRV.paths.products.PatchProducts;
-import de.laurinhummel.SparkSRV.paths.users.GetUser;
-import de.laurinhummel.SparkSRV.paths.users.GetUsers;
-import de.laurinhummel.SparkSRV.paths.users.PostCreate;
+import de.laurinhummel.SparkSRV.paths.users.*;
 import spark.Spark;
 
 import java.io.IOException;

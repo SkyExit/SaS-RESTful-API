@@ -77,7 +77,7 @@ public class MySQLConnectionHandler {
     }
 
     public JSONObject getUserData(String searchParameter, Request request, Response response) {
-        String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation` LIKE '%" + searchParameter + "'";
+        String sqlArgs = "SELECT * FROM `" + Main.names[0] + "` WHERE `validation`='" + searchParameter + "'";
 
         try {
             Connection connection = getConnection();
@@ -111,7 +111,7 @@ public class MySQLConnectionHandler {
     }
 
     public JSONObject getProduct(String searchParameter, Request request, Response response) {
-        String sqlArgs = "SELECT * FROM `" + Main.names[3] + "` WHERE `validation_product` LIKE '%" + searchParameter + "'";
+        String sqlArgs = "SELECT * FROM `" + Main.names[3] + "` WHERE `validation_product`='" + searchParameter + "'";
 
         try {
             Connection connection = getConnection();

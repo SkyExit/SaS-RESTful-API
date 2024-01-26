@@ -1,4 +1,4 @@
-package de.laurinhummel.SparkSRV.paths;
+package de.laurinhummel.SparkSRV.paths.users;
 
 import de.laurinhummel.SparkSRV.Main;
 import de.laurinhummel.SparkSRV.USRObjectV2;
@@ -89,7 +89,7 @@ public class PatchTransaction implements Route {
             return JRepCrafter.cancelOperation(response, 500, "There was an error while pushing data back to database");
         }
 
-        //INSERTING DATA INTO BLOCKCHAIN
+        //INSERTING DATA INTO HISTORY
         try {
             String query = "insert into " + Main.names[1] + " (validation_active, name_active, validation_passive, name_passive, money)"
                     + " values (?, ?, ?, ?, ?)";
