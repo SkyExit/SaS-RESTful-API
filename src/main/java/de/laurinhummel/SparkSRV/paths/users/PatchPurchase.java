@@ -33,12 +33,11 @@ public class PatchPurchase implements Route {
         if(!body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to provide a password for the transaction");
         if(!body.has("message") || body.getString("message").isBlank()) message = null; else message = body.getString("message");
 
-        if(!PostLogin.getLoginStatus(connection, body.getString("customer"), body.getString("password"))) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Password is incorrect");
+        if(PostLogin.getLoginStatus(connection, body.getString("customer"), body.getString("password")) < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Password is incorrect");
 
         //FETCH BOTH USERS AND CHECK VALIDITY
         JSONObject enterprise = handler.getUserData(body.getString("enterprise"), request, response).getJSONObject("user");
         JSONObject customer = handler.getUserData(body.getString("customer"), request, response).getJSONObject("user");
-        SkyLogger.log(enterprise.toString());
 
         if(enterprise.getInt("priority") != 2) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Enterprise doesn't exist");
         if(customer.getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Customer doesn't exist");
