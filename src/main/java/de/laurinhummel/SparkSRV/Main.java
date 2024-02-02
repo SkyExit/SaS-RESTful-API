@@ -69,18 +69,20 @@ public class Main {
         Spark.patch("/purchase", new PatchPurchase(handler));
         Spark.patch("/purchase/", new PatchPurchase(handler));
 
-        Spark.get("/history/:validation", new GetHistory(handler));
-        Spark.get("/history/:validation/", new GetHistory(handler));
-        Spark.get("/history", new GetHistory(handler));
-        Spark.get("/history/", new GetHistory(handler));
+        Spark.get("/history/:validation", new GetHistory(handler));                 //DELETE
+        Spark.get("/history/:validation/", new GetHistory(handler));                //DELETE
+        Spark.get("/history/:validation/:amount", new GetHistory(handler));
+        Spark.get("/history/:validation/:amount/", new GetHistory(handler));
+        Spark.get("/history", new GetHistory(handler));                             //DELETE
+        Spark.get("/history/", new GetHistory(handler));                            //DELETE
 
         Spark.patch("/employee", new PatchEmployee(handler));
         Spark.patch("/employee/", new PatchEmployee(handler));
 
         Spark.get("/enterprises/:validation", new GetEnterprises(handler));
         Spark.get("/enterprises/:validation/", new GetEnterprises(handler));
-        Spark.get("/enterprises", new GetEnterprises(handler));
-        Spark.get("/enterprises/", new GetEnterprises(handler));
+        Spark.get("/enterprises", new GetEnterprises(handler));                     //DELETE
+        Spark.get("/enterprises/", new GetEnterprises(handler));                    //DELETE
 
         Spark.post("/login", new PostLogin(handler));
         Spark.post("/login/", new PostLogin(handler));
@@ -89,8 +91,8 @@ public class Main {
         Spark.get("/products/:enterprise/:product/", new GetProducts(handler));
         Spark.get("/products/:enterprise", new GetProducts(handler));
         Spark.get("/products/:enterprise/", new GetProducts(handler));
-        Spark.get("/products", new GetProducts(handler));
-        Spark.get("/products/", new GetProducts(handler));
+        Spark.get("/products", new GetProducts(handler));                           //DELETE
+        Spark.get("/products/", new GetProducts(handler));                          //DELETE
 
         Spark.patch("/products", new PatchProducts(handler));
         Spark.patch("/products/", new PatchProducts(handler));

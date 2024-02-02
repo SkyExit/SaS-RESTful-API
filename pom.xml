@@ -6,7 +6,7 @@
 
     <groupId>de.laurinhummel</groupId>
     <artifactId>SparkSRV</artifactId>
-    <version>0.15.7-BETA</version>
+    <version>0.15.9-BETA</version>
 
     <build>
         <resources>

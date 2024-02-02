@@ -22,20 +22,23 @@ public class GetHistory implements Route {
         if(SessionValidationHandler.validate(request)) { return SessionValidationHandler.correct(response); }
 
         Connection connection = handler.getConnection();
+        StringBuilder sqlArgs = new StringBuilder().append("SELECT * FROM ").append(Main.names[1]);
+        String validation;
+        Integer amount;
 
-        String searchParameter = request.params(":validation") == null ? "" : request.params(":validation");
-        String sqlArgs;
+        try {
+            validation = (request.params(":validation") == null || request.params(":validation").isBlank()) ? null : request.params(":validation");
+            amount = (request.params(":amount") == null || request.params(":amount").isBlank()) ? null : Integer.parseInt(request.params(":amount"));
+        } catch (Exception ex) { return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Malformed request"); }
 
-        if(searchParameter.isBlank()) {
-            sqlArgs = "SELECT * FROM " + Main.names[1] + " ORDER BY date DESC";
-        } else {
-            sqlArgs = "SELECT * FROM " + Main.names[1] + " WHERE validation_active='" + searchParameter + "' OR validation_passive='" + searchParameter + "' ORDER BY date DESC";
-        }
+        if(validation != null) sqlArgs.append(" WHERE enterprise_validation='").append(validation).append("' OR customer_validation='").append(validation).append("'");
+        sqlArgs.append(" ORDER BY date DESC");
+        if(amount != null) sqlArgs.append(" LIMIT ").append(amount);
 
         try {
             Main.createWealth(connection);
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs);
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs.toString());
             ResultSet rs = preparedStatement.executeQuery();
 
             JSONArray ja = new JSONArray();
@@ -44,10 +47,10 @@ public class GetHistory implements Route {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
                         .put("date", rs.getTimestamp("date"))
-                        .put("validation_active", rs.getString("validation_active"))
-                        .put("name_active", rs.getString("name_active"))
-                        .put("validation_passive", rs.getString("validation_passive"))
-                        .put("name_passive", rs.getString("name_passive"))
+                        .put("enterprise_validation", rs.getString("enterprise_validation"))
+                        .put("enterprise_name", rs.getString("enterprise_name"))
+                        .put("customer_validation", rs.getString("customer_validation"))
+                        .put("message", rs.getString("message"))
                         .put("money", rs.getInt("money")));
             }
 
@@ -57,7 +60,7 @@ public class GetHistory implements Route {
 
             rs.close();
             preparedStatement.close();
-            SkyLogger.log("Fetched transaction history for " + (searchParameter.isBlank() ? "global" : searchParameter));
+            SkyLogger.log("Fetched transaction history for " + (validation == null ? "global" : validation));
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("transactions", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);
