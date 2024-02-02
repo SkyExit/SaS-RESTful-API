@@ -60,14 +60,14 @@ public class Main {
         Spark.get("/users/:validation", new GetUser(handler));
         Spark.get("/users/:validation/", new GetUser(handler));
 
-        Spark.get("/users", new GetUsers(handler));
-        Spark.get("/users/", new GetUsers(handler));
+        Spark.get("/users", new GetUsers(handler));                                 //DELETE
+        Spark.get("/users/", new GetUsers(handler));                                //DELETE
 
-        Spark.post("/create", new PostCreate(handler));
-        Spark.post("/create/", new PostCreate(handler));
+        Spark.post("/create", new PostCreate(handler));                             //RESTRICT
+        Spark.post("/create/", new PostCreate(handler));                            //RESTRICT
 
-        Spark.patch("/transaction", new PatchTransaction(handler));
-        Spark.patch("/transaction/", new PatchTransaction(handler));
+        Spark.patch("/purchase", new PatchPurchase(handler));
+        Spark.patch("/purchase/", new PatchPurchase(handler));
 
         Spark.get("/history/:validation", new GetHistory(handler));
         Spark.get("/history/:validation/", new GetHistory(handler));
@@ -96,7 +96,7 @@ public class Main {
         Spark.patch("/products/", new PatchProducts(handler));
     }
 
-    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v3", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
+    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v5", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
 
     public static String APIKEY = "40263hv-0824ff933a-4014ff9345-d7c0402";
 
@@ -117,10 +117,10 @@ public class Main {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[1] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                "validation_active VARCHAR(20) NOT NULL," +
-                "name_active VARCHAR(50) NOT NULL," +
-                "validation_passive VARCHAR(20)," +
-                "name_passive VARCHAR(50) DEFAULT NULL," +
+                "enterprise_validation VARCHAR(20) NOT NULL," +
+                "enterprise_name VARCHAR(50) NOT NULL," +
+                "customer_validation VARCHAR(20)," +
+                "message VARCHAR(50) DEFAULT NULL," +
                 "money INTEGER NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();

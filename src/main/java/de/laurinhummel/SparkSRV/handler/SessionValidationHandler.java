@@ -25,8 +25,8 @@ public class SessionValidationHandler {
 
     public static Object correct(Response response) {
         return switch (type) {
-            case INVALID_API_KEY -> JRepCrafter.cancelOperation(response, 401, "Invalid or missing API-Key");
-            case INVALID_SESSION_ID -> JRepCrafter.cancelOperation(response, 401, "Invalid Session ID");
+            case INVALID_API_KEY -> JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Invalid or missing API-Key");
+            case INVALID_SESSION_ID -> JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Invalid Session ID");
             default -> null;
         };
     }

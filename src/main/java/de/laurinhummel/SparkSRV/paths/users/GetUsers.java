@@ -45,10 +45,10 @@ public class GetUsers implements Route {
             rs.close();
             preparedStatement.close();
             SkyLogger.log("User list fetched");
-            return JRepCrafter.cancelOperation(response, 200, null).put("users", ja);
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("users", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user list");
         }
     }
 }

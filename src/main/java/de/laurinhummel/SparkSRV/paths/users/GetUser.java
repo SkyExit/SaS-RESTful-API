@@ -21,7 +21,7 @@ public class GetUser implements Route {
             validationID = request.params(":validation");
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Error while parsing parameter");
         }
 
         return handler.getUserData(validationID, request, response);

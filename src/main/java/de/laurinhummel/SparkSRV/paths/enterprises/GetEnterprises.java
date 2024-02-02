@@ -37,7 +37,7 @@ public class GetEnterprises implements Route {
                 JSONObject userData = handler.getUserData(searchParameter, request, response);
                 priority = userData.getJSONObject("user").getInt("priority");
             } catch (Exception ex) {
-                return JRepCrafter.cancelOperation(response, 500, "Database is empty");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Database is empty");
             }
 
             sqlArgs = switch (priority) {
@@ -102,17 +102,17 @@ public class GetEnterprises implements Route {
             }
 
             if(ja.isEmpty()) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified " + ((priority == 1) ? "user is not employed" : "enterprise has no employees"));
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified " + ((priority == 1) ? "user is not employed" : "enterprise has no employees"));
             }
 
             rs.close();
             preparedStatement.close();
             SkyLogger.log(SkyLogger.Level.INFO, "Fetched enterprise register for " + (searchParameter.isBlank() ? "global" : searchParameter));
 
-            return JRepCrafter.successOperation(response, 200).put("data", ja).put("priority", priority);
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("data", ja).put("priority", priority);
         } catch (Exception e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user list");
         }
     }
 }

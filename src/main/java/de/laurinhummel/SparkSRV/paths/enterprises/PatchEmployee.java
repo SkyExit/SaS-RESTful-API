@@ -33,14 +33,14 @@ public class PatchEmployee implements Route {
         } catch (JSONException ex) {
             response.status(500);
             SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing JSON body");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Error while parsing JSON body");
         }
 
         //FETCH USER
         try {
             JSONObject employee = handler.getUserData(validationEmployee, request, response);
             if(employee.getInt("status") != 200) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified user not found");
             }
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
@@ -80,10 +80,10 @@ public class PatchEmployee implements Route {
             statement.close();
         } catch (SQLException ex) {
             SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "There was an error while parsing user data");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "There was an error while parsing user data");
         }
 
         SkyLogger.log(validationEmployee + " changed status at " + validationEnterprise);
-        return JRepCrafter.cancelOperation(response, 200, "Performing transaction was a success");
+        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Performing transaction was a success");
     }
 }

@@ -89,7 +89,8 @@ public class MySQLConnectionHandler {
             JSONObject ja = new JSONObject();
 
             if(!rs.next()) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified user not found");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified user not found")
+                        .put("user", new JSONObject().put("priority", 0));
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));
@@ -106,7 +107,7 @@ public class MySQLConnectionHandler {
             return jo;
         } catch (SQLException e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user");
         }
     }
 
@@ -123,7 +124,7 @@ public class MySQLConnectionHandler {
             JSONObject ja = new JSONObject();
 
             if(!rs.next()) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified product not found");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified product not found");
             } else {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation_enterprise", rs.getString("validation_enterprise"));
@@ -140,7 +141,7 @@ public class MySQLConnectionHandler {
             return jo;
         } catch (SQLException e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user");
         }
     }
 }

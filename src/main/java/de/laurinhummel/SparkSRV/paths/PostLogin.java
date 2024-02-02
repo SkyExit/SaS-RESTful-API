@@ -31,28 +31,22 @@ public class PostLogin implements Route {
         JSONObject body = JRepCrafter.getRequestBody(request, response);
         if(response.status() != 200) return body;
 
-        if(!body.has("validation") || body.getString("validation").isBlank()) return JRepCrafter.cancelOperation(response, 400, "Please provide an ID");
-        if(!body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, 400, "Please provide a password");
+        if(!body.has("validation") || body.getString("validation").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Please provide an ID");
+        if(!body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Please provide a password");
 
         String validation = body.getString("validation");
         String password = body.getString("password");
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" + Main.names[4] + "` WHERE `validationID`='" + validation +
-                    "' AND `password`='" + password + "'");
-            ResultSet rs = preparedStatement.executeQuery();
-
             JSONObject jo = new JSONObject();
             jo.put("status", response.status());
 
-            if(!rs.next()) {
-                return JRepCrafter.cancelOperation(response, 403, "Invalid username or password").put("login", false);
+            if(!getLoginStatus(connection, validation, password)) {
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Invalid username or password").put("login", false);
             }
-            rs.close();
-            preparedStatement.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user");
         }
 
         long time = Instant.now().toEpochMilli();
@@ -60,6 +54,21 @@ public class PostLogin implements Route {
         String encoded = Base64.getEncoder().encodeToString(input.getBytes());
 
         SkyLogger.log("User " + validation + " logged in at " + Instant.now());
-        return JRepCrafter.cancelOperation(response, 200, "kp was du willst").put("token", encoded).put("creation", time).put("login", true);
+        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("token", encoded).put("creation", time).put("login", true);
+    }
+
+
+    public static boolean getLoginStatus(Connection connection, String validationID, String password) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" + Main.names[4] + "` WHERE `validationID`='" + validationID +
+                    "' AND `password`='" + password + "'");
+            ResultSet rs = preparedStatement.executeQuery();
+            if(!rs.next()) { return false; }
+            rs.close();
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

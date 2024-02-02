@@ -38,7 +38,7 @@ public class GetProducts implements Route {
                     .getJSONObject("product").getString("validation_product");
         } catch (Exception ex) {
             SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing parameter");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Error while parsing parameter");
         }
 
         try {
@@ -79,7 +79,7 @@ public class GetProducts implements Route {
                     reg.put(entry.getValue());
                 }
 
-                return JRepCrafter.cancelOperation(response, 200, "Fetched all products").put("products", reg);
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Fetched all products").put("products", reg);
             } else if(productID == null) {
                 //LIST ALL PRODUCTS OF ENTERPRISE
 
@@ -101,17 +101,17 @@ public class GetProducts implements Route {
                     rs.close();
                     preparedStatement.close();
                     SkyLogger.log("Product list fetched for " + enterpriseID);
-                    return JRepCrafter.cancelOperation(response, 200, null).put("products", ja). put("enterprise", enterpriseID);
+                    return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("products", ja). put("enterprise", enterpriseID);
                 } catch (Exception e) {
                     SkyLogger.logStack(e);
-                    return JRepCrafter.cancelOperation(response, 500, "Error while parsing product list");
+                    return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing product list");
                 }
             } else {
                 //SPECIFIC PRODUCT
                 return handler.getProduct(productID, request, response);
             }
         } catch (Exception ex) {
-            return JRepCrafter.cancelOperation(response, 500, "No results!");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "No results!");
         }
     }
 }

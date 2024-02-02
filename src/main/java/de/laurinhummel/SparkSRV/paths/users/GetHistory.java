@@ -52,16 +52,16 @@ public class GetHistory implements Route {
             }
 
             if(ja.isEmpty()) {
-                return JRepCrafter.cancelOperation(response, 404, "Specified user has no transactions");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified user has no transactions");
             }
 
             rs.close();
             preparedStatement.close();
             SkyLogger.log("Fetched transaction history for " + (searchParameter.isBlank() ? "global" : searchParameter));
-            return JRepCrafter.cancelOperation(response, 200, null).put("transactions", ja);
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("transactions", ja);
         } catch (SQLException e) {
             SkyLogger.logStack(e);
-            return JRepCrafter.cancelOperation(response, 500, "Error while parsing user list");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user list");
         }
     }
 }

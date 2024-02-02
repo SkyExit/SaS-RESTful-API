@@ -42,7 +42,7 @@ public class PatchProducts implements Route {
             if(ent.getInt("status") != 200) throw new NullPointerException();
             enterprise = ent.getJSONObject("user").getString("validation");
         } catch (Exception exception) {
-            return JRepCrafter.cancelOperation(response, 500, "You have to provide an enterprise validation ID");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You have to provide an enterprise validation ID");
         }
 
         if(body.has("val_product") && !body.get("val_product").toString().isBlank()) val_product = body.getString("val_product");
@@ -50,7 +50,7 @@ public class PatchProducts implements Route {
         if(body.has("price") && !body.get("price").toString().isBlank()) price = Integer.parseInt(body.get("price").toString());
         if(body.has("remove") && !body.get("remove").toString().isBlank()) remove = Boolean.parseBoolean(body.get("remove").toString());
 
-        if(price != null && price < 0) return JRepCrafter.cancelOperation(response, 500, "The price hast to be greater than 0!");
+        if(price != null && price < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "The price hast to be greater than 0!");
 
         //SkyLogger.log(enterprise + " " + val_product + " " + name_product + " " + price + " " + remove);
 
@@ -71,7 +71,7 @@ public class PatchProducts implements Route {
                 preparedStmt.execute();
 
                 SkyLogger.log("Product" + val_product + " created successfully");
-                return JRepCrafter.cancelOperation(response, 201, null).put("product", new JSONObject()
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.CREATED, null).put("product", new JSONObject()
                     .put("val_enterprise", enterprise)
                     .put("val_product", val_product)
                     .put("name_product", name_product)
@@ -90,6 +90,6 @@ public class PatchProducts implements Route {
 
         }
 
-        return JRepCrafter.cancelOperation(response, 500, "Fallout - PatchProducts");
+        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Fallout - PatchProducts");
     }
 }

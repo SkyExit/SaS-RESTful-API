@@ -28,6 +28,7 @@ public class PostCreate implements Route {
             Connection connection = handler.getConnection();
 
             String val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
+            String password = "PWD-" + RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
 
             while (handler.getUserData(val, request, response).getInt("status") == 200) {
                 val = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
@@ -38,14 +39,12 @@ public class PostCreate implements Route {
             if(response.status() != 200) return body;
 
             try {
-                if(!body.has("priority") || !body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, 400, "You need to set password and priority");
-                if(!ArrayUtils.contains(new int[]{1,2}, body.getInt("priority"))) return JRepCrafter.cancelOperation(response, 400, "Priority must be 1 or 2");
-                if(body.getInt("priority") >= 2 && (!body.has("name") || body.getString("name").isBlank())) return JRepCrafter.cancelOperation(response, 400, "Enterprises must have a name");
+                if(!body.has("priority")) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to set password and priority");
+                if(!ArrayUtils.contains(new int[]{1,2}, body.getInt("priority"))) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Priority must be 1 or 2");
+                if(body.getInt("priority") >= 2 && (!body.has("name") || body.getString("name").isBlank())) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must have a name");
             } catch (Exception ex) {
-                return JRepCrafter.cancelOperation(response, 400, "Malformed json body");
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Malformed json body");
             }
-
-            //return body.getString("name") + " " + body.getString("password") + " " + body.getInt("priority");
 
             boolean isEnterprise = body.getInt("priority") == 2;
             val = (isEnterprise ? "ENT" : "USR") + "-" + val;
@@ -60,13 +59,14 @@ public class PostCreate implements Route {
 
             preparedStmt = connection.prepareStatement("insert into " + Main.names[4] + " (validationID, password, enabled) values (?, ?, ?)");
             preparedStmt.setString(1, val);
-            preparedStmt.setString (2, body.getString("password"));
+            preparedStmt.setString (2, password);
             preparedStmt.setBoolean(3, true);
             preparedStmt.execute();
 
 
             SkyLogger.log((name == null ? "User" : "Enterprise") + " created successfully");
-            return JRepCrafter.cancelOperation(response, 201, null).put("validationID", val).put("name", name).put("message", (name == null ? "User" : "Enterprise") + " created successfully");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.CREATED, null).put("validationID", val).put("name", name)
+                    .put("message", (name == null ? "User" : "Enterprise") + " created successfully").put("password", password);
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());

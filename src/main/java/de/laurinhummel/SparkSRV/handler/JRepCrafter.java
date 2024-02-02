@@ -6,16 +6,27 @@ import spark.Request;
 import spark.Response;
 
 public class JRepCrafter {
-    public static JSONObject cancelOperation(Response response, int statusCode, String message) {
-        response.status(statusCode);
-        return new JSONObject().put("status", response.status())
-                .put("message", message);
+    public enum ResCode {
+        OK(200),
+        CREATED(201),
+        ACCEPTED(202),
+        BAD_REQUEST(400),               //MALFORMED JSON BODY
+        UNAUTHORIZED(401),
+        FORBIDDEN(403),
+        NOT_FOUND(404),
+        LOCKED(423),
+        INTERNAL_SERVER_ERROR(500),
+        NOT_IMPLEMENTED(501);
+
+        public final int code;
+        ResCode(int code) { this.code = code; }
     }
 
-    public static JSONObject successOperation(Response response, int statusCode) {
-        response.status(statusCode);
+
+    public static JSONObject cancelOperation(Response response, ResCode statusCode, String message) {
+        response.status(statusCode.code);
         return new JSONObject().put("status", response.status())
-                .put("status", statusCode);
+                .put("message", message);
     }
 
     public static JSONObject getRequestBody(Request request, Response response) {
@@ -25,7 +36,7 @@ public class JRepCrafter {
         } catch (JSONException ex) {
             response.status(500);
             SkyLogger.logStack(ex);
-            return cancelOperation(response, 500, "Error while parsing JSON body");
+            return cancelOperation(response, ResCode.INTERNAL_SERVER_ERROR, "Error while parsing JSON body");
         }
     }
 }
