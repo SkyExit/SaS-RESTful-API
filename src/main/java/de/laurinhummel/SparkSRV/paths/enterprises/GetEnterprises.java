@@ -26,19 +26,17 @@ public class GetEnterprises implements Route {
 
         Connection connection = handler.getConnection();
 
-        String searchParameter = request.params(":validation") == null ? "" : request.params(":validation");
+        if(request.params(":validation").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to specify an enterprise or a user");
+
+        String searchParameter = request.params(":validation");
         String sqlArgs;
         int priority = 0;
 
         if(searchParameter.isBlank()) {
             sqlArgs = "SELECT * FROM " + Main.names[2] + " ORDER BY id DESC";
         } else {
-            try {
-                JSONObject userData = handler.getUserData(searchParameter, request, response);
-                priority = userData.getJSONObject("user").getInt("priority");
-            } catch (Exception ex) {
-                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Database is empty");
-            }
+            priority = handler.getUserData(searchParameter, request, response).getJSONObject("user").getInt("priority");
+            if(priority <= 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "User not found");
 
             sqlArgs = switch (priority) {
                 case 1 -> "SELECT * FROM " + Main.names[2] + " WHERE validation_employee='" + searchParameter + "' ORDER BY id DESC";
@@ -53,42 +51,11 @@ public class GetEnterprises implements Route {
 
             JSONArray ja = new JSONArray();
             switch (priority) {
-                case 0 -> {
-                    //MAP -> Enterprise + (Employee, Employed)
-                    Map<String, Map<String, Boolean>> map = new HashMap<String, Map<String, Boolean>>();
-
-                    while(rs.next()) {
-                        try {
-                            if(map.containsKey(rs.getString("validation_enterprise"))) {
-                                map.get(rs.getString("validation_enterprise")).put(rs.getString("validation_employee"), rs.getBoolean("employed"));
-                            } else {
-                                Map<String, Boolean> innerMap = new HashMap<String, Boolean>();
-                                innerMap.put(rs.getString("validation_employee"), rs.getBoolean("employed"));
-                                map.put(rs.getString("validation_enterprise"), innerMap);
-                            }
-                        } catch (Exception ex) {
-                            SkyLogger.logStack(ex);
-                        }
-                    }
-
-                    for (Map.Entry<String, Map<String, Boolean>> entry : map.entrySet()) {
-                        Map<String, Boolean> employees = entry.getValue();
-
-                        JSONArray array = new JSONArray();
-                        for(Map.Entry<String, Boolean> member : employees.entrySet()) {
-                            array.put(new JSONObject()
-                                    .put("name", member.getKey())
-                                    .put("employed", member.getValue()));
-                        }
-
-                        ja.put(new JSONObject().put("enterprise", entry.getKey())
-                                .put("members", array));
-                    }
-                }
                 case 1 -> {
                     while (rs.next()) {
                         ja.put(new JSONObject()
                                 .put("name", rs.getString("validation_enterprise"))
+                                .put("salary", rs.getInt("salary"))
                                 .put("employed", rs.getBoolean("employed")));
                     }
                 }
@@ -96,6 +63,7 @@ public class GetEnterprises implements Route {
                     while (rs.next()) {
                         ja.put(new JSONObject()
                                 .put("name", rs.getString("validation_employee"))
+                                .put("salary", rs.getInt("salary"))
                                 .put("employed", rs.getBoolean("employed")));
                     }
                 }

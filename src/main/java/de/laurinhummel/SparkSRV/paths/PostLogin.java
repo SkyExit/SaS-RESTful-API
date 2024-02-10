@@ -79,3 +79,8 @@ public class PostLogin implements Route {
         }
     }
 }
+
+// 2 -> ENTERPRISE
+// 1 -> USER
+// 0 -> NOT FOUND
+// -1 -> WRONG PASSWORD

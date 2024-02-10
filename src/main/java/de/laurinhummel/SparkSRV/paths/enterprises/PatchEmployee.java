@@ -5,6 +5,7 @@ import de.laurinhummel.SparkSRV.handler.JRepCrafter;
 import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SessionValidationHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
+import de.laurinhummel.SparkSRV.paths.PostLogin;
 import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
@@ -22,57 +23,56 @@ public class PatchEmployee implements Route {
 
         Connection connection = handler.getConnection();
 
-        String validationEnterprise;
-        String validationEmployee;
-
         //JSON REQUEST BODY VALIDATOR
-        try {
-            JSONObject body = new JSONObject(request.body());
-            validationEnterprise = body.getString("enterprise");
-            validationEmployee = body.getString("employee");
-        } catch (JSONException ex) {
-            response.status(500);
-            SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Error while parsing JSON body");
-        }
+        JSONObject body = JRepCrafter.getRequestBody(request, response);
+        if(!body.has("enterprise") || body.getString("enterprise").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a 'enterprise validation ID'");
+        if(!body.has("employee") || body.getString("employee").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a 'employee validation ID'");
+        if(!body.has("salary") || body.getInt("salary") < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a salary greater than 0");
+        if(!body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to provide a password for the transaction");
 
-        //FETCH USER
-        try {
-            JSONObject employee = handler.getUserData(validationEmployee, request, response);
-            if(employee.getInt("status") != 200) {
-                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Specified user not found");
-            }
-        } catch (Exception ex) {
-            SkyLogger.logStack(ex);
-            return null;
-        }
+        //VALIDATE PASSWORD
+        if(PostLogin.getLoginStatus(connection, body.getString("enterprise"), body.getString("password")) < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Password is incorrect");
+
+        //VALIDATE USER
+        JSONObject customer = handler.getUserData(body.getString("employee"), request, response).getJSONObject("user");
+        if(customer.getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "User doesn't exist");
+
 
 
         //PATCH USER
         try {
-            String sqlArgs = "SELECT * FROM `" + Main.names[2] + "` WHERE `validation_enterprise`='" + validationEnterprise + "' AND `validation_employee`='" + validationEmployee + "';";
-            Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            String sqlArgs = "SELECT * FROM `" + Main.names[2] + "` WHERE `validation_enterprise`='" + body.getString("enterprise") + "' AND `validation_employee`='" + body.getString("employee") + "';";
+            Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sqlArgs);
 
             if(!rs.isBeforeFirst()) {
                 //User is new
-                String query = "insert into " + Main.names[2] + " (validation_enterprise, validation_employee, employed)"
-                        + " values (?, ?, ?)";
+                String query = "insert into " + Main.names[2] + " (validation_enterprise, validation_employee, employed, salary)"
+                        + " values (?, ?, ?, ?)";
 
                 PreparedStatement preparedStmt = connection.prepareStatement(query);
-                    preparedStmt.setString(1, validationEnterprise);
-                    preparedStmt.setString(2, validationEmployee);
+                    preparedStmt.setString(1, body.getString("enterprise"));
+                    preparedStmt.setString(2, body.getString("employee"));
                     preparedStmt.setBoolean(3, true);
+                    preparedStmt.setInt(4, body.getInt("salary"));
 
                 preparedStmt.execute();
             } else {
                 //edit user status
-                if(rs.getBoolean("employed")) {
-                    connection.prepareStatement("UPDATE `" + Main.names[2] + "` SET `employed`='" + 0 + "' WHERE `validation_enterprise`='" + validationEnterprise +
-                            "' AND `validation_employee`='" + validationEmployee + "'").execute();
+                rs.next();
+
+                if(rs.getInt("salary") == body.getInt("salary")) {
+                    //KICK - REEMPLOY
+                    if(rs.getBoolean("employed")) {
+                        connection.prepareStatement("UPDATE `" + Main.names[2] + "` SET `employed`='" + 0 + "' WHERE `validation_enterprise`='" + body.getString("enterprise") +
+                                "' AND `validation_employee`='" + body.getString("employee") + "'").execute();
+                    } else {
+                        connection.prepareStatement("UPDATE `" + Main.names[2] + "` SET `employed`='" + 1 + "' WHERE `validation_enterprise`='" + body.getString("enterprise") +
+                                "' AND `validation_employee`='" + body.getString("employee") + "'").execute();
+                    }
                 } else {
-                    connection.prepareStatement("UPDATE `" + Main.names[2] + "` SET `employed`='" + 1 + "' WHERE `validation_enterprise`='" + validationEnterprise +
-                            "' AND `validation_employee`='" + validationEmployee + "'").execute();
+                    connection.prepareStatement("UPDATE `" + Main.names[2] + "` SET `salary`='" + body.getInt("salary") + "' WHERE `validation_enterprise`='" + body.getString("enterprise") +
+                            "' AND `validation_employee`='" + body.getString("employee") + "'").execute();
                 }
             }
 
@@ -83,7 +83,7 @@ public class PatchEmployee implements Route {
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "There was an error while parsing user data");
         }
 
-        SkyLogger.log(validationEmployee + " changed status at " + validationEnterprise);
-        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Performing transaction was a success");
+        SkyLogger.log(body.getString("employee") + " changed status at " + body.getString("enterprise"));
+        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Changing employment status was a success");
     }
 }
