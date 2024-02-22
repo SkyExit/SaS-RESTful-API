@@ -37,8 +37,7 @@ public class GetProducts implements Route {
             productID = (request.params(":product") == null || request.params(":product").isBlank()) ? null : handler.getProduct(request.params(":product"), request, response)
                     .getJSONObject("product").getString("validation_product");
         } catch (Exception ex) {
-            SkyLogger.logStack(ex);
-            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Error while parsing parameter");
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Enterprise or product not found");
         }
 
         try {

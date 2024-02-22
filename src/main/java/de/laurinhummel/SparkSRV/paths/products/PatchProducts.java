@@ -85,9 +85,43 @@ public class PatchProducts implements Route {
             }
         }
 
-        //EDIT PRODUCT DATA
-        if(val_product != null && Boolean.FALSE.equals(remove)) {
+        JSONObject product = handler.getProduct(val_product, request, response);
+        if(product.getInt("status") != 200 || !product.getJSONObject("product").getString("validation_enterprise").equals(enterprise)) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Product was not found");
 
+        //EDIT PRODUCT DATA
+        if(val_product != null && (name_product != null || price != null) && Boolean.FALSE.equals(remove)) {
+            try {
+                StringBuilder sql = new StringBuilder("UPDATE " + Main.names[3] + " SET ");
+                if(name_product != null && !name_product.isBlank()) sql.append("`name_product`='").append(name_product).append("'");
+                if(name_product != null && !name_product.isBlank() && price != null) sql.append(", ");
+                if(price != null) sql.append("`price`='").append(price).append("'");
+                sql.append(" WHERE `validation_enterprise`='").append(enterprise).append("'").append(" AND `validation_product`='").append(val_product).append("'");
+
+                connection.prepareStatement(sql.toString()).execute();
+
+                SkyLogger.log("Product (" + val_product + ") changed successfully (" + name_product + ", " + price + ")");
+            } catch (Exception e) {
+                SkyLogger.logStack(e);
+            }
+
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Product updated successfully").put("product", new JSONObject()
+                    .put("val_enterprise", enterprise)
+                    .put("val_product", val_product)
+                    .put("name_product", name_product)
+                    .put("price", price)
+            );
+        }
+
+        //DELETE PRODUCT
+        if(val_product != null && Boolean.TRUE.equals(remove)) {
+            try {
+                connection.prepareStatement("DELETE FROM " + Main.names[3] + " WHERE `validation_enterprise`='" + enterprise + "' AND `validation_product`='" + val_product + "'").execute();
+            } catch (Exception e) {
+                SkyLogger.logStack(e);
+                return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Error while deleting product (" + val_product + ")");
+            }
+
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Removing product successful (" + val_product + ")");
         }
 
         return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Fallout - PatchProducts");
