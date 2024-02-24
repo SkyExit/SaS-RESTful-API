@@ -28,10 +28,6 @@ public class PatchEmployee implements Route {
         if(!body.has("enterprise") || body.getString("enterprise").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a 'enterprise validation ID'");
         if(!body.has("employee") || body.getString("employee").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a 'employee validation ID'");
         if(!body.has("salary") || body.getInt("salary") < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You must provide a salary greater than 0");
-        if(!body.has("password") || body.getString("password").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to provide a password for the transaction");
-
-        //VALIDATE PASSWORD
-        if(PostLogin.getLoginStatus(connection, body.getString("enterprise"), body.getString("password")) < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.FORBIDDEN, "Password is incorrect");
 
         //VALIDATE USER
         JSONObject customer = handler.getUserData(body.getString("employee"), request, response).getJSONObject("user");

@@ -108,7 +108,9 @@ public class Main {
                 "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(20) NOT NULL," +
                 "money INTEGER NOT NULL," +
-                "priority INTEGER NOT NULL" + ")";
+                "priority INTEGER NOT NULL," +
+                "owner VARCHAR(50) DEFAULT NULL," +
+                "taxed BOOLEAN NOT NULL DEFAULT TRUE" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);

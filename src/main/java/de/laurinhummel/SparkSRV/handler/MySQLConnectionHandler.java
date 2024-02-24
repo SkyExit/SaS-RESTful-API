@@ -36,6 +36,7 @@ public class MySQLConnectionHandler {
             createDatabases(connection);
             return connection;
         } catch (SQLException e) {
+            SkyLogger.logStack(e);
             try {
                 System.out.println("Connecting Docker database...");
                 connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.2" + ":" + PORT + "/" + DBNAME, username, password);
