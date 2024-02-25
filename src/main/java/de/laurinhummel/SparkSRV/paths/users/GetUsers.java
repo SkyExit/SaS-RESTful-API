@@ -38,7 +38,7 @@ public class GetUsers implements Route {
                         .put("id", rs.getInt("id"))
                         .put("validation", rs.getString("validation"))
                         .put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"))
-                        .put("money", rs.getInt("money"))
+                        .put("money", rs.getFloat("money"))
                         .put("priority", rs.getInt("priority")));
             }
 

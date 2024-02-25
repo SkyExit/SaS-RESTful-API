@@ -58,7 +58,7 @@ public class GetProducts implements Route {
                                     .put("validation_enterprise", rs.getString("validation_enterprise"))
                                     .put("validation_product", rs.getString("validation_product"))
                                     .put("name_product", rs.getString("name_product"))
-                                    .put("price", rs.getInt("price"))
+                                    .put("price", rs.getFloat("price"))
                             );
                         } else {
                             map.put(rs.getString("validation_enterprise"), new JSONArray().put(new JSONObject()
@@ -94,7 +94,7 @@ public class GetProducts implements Route {
                                 .put("validation_enterprise", rs.getString("validation_enterprise"))
                                 .put("validation_product", rs.getString("validation_product"))
                                 .put("name_product", rs.getString("name_product"))
-                                .put("price", rs.getInt("price")));
+                                .put("price", rs.getFloat("price")));
                     }
 
                     rs.close();

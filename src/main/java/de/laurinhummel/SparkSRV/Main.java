@@ -107,7 +107,7 @@ public class Main {
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "name VARCHAR(50) DEFAULT NULL," +
                 "validation VARCHAR(20) NOT NULL," +
-                "money INTEGER NOT NULL," +
+                "money FLOAT NOT NULL," +
                 "priority INTEGER NOT NULL," +
                 "owner VARCHAR(50) DEFAULT NULL," +
                 "taxed BOOLEAN NOT NULL DEFAULT TRUE" + ")";
@@ -125,7 +125,7 @@ public class Main {
                 "enterprise_name VARCHAR(50) NOT NULL," +
                 "customer_validation VARCHAR(20)," +
                 "message VARCHAR(50) DEFAULT NULL," +
-                "money INTEGER NOT NULL" + ")";
+                "money FLOAT NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
@@ -137,8 +137,8 @@ public class Main {
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_employee VARCHAR(20) NOT NULL," +
-                "employed BOOLEAN DEFAULT TRUE," +
-                "salary INTEGER NOT NULL" + ")";
+                "name_enterprise VARCHAR(50) NOT NULL," +
+                "salary FLOAT NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
@@ -151,7 +151,7 @@ public class Main {
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_product VARCHAR(20) NOT NULL," +
                 "name_product VARCHAR(60) NOT NULL," +
-                "price INTEGER NOT NULL DEFAULT 0" + ")";
+                "price FLOAT NOT NULL DEFAULT 0" + ")";
 
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);

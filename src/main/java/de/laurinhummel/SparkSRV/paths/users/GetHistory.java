@@ -51,7 +51,7 @@ public class GetHistory implements Route {
                         .put("enterprise_name", rs.getString("enterprise_name"))
                         .put("customer_validation", rs.getString("customer_validation"))
                         .put("message", rs.getString("message"))
-                        .put("money", rs.getInt("money")));
+                        .put("money", rs.getFloat("money")));
             }
 
             if(ja.isEmpty()) {

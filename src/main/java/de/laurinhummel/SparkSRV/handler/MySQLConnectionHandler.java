@@ -96,7 +96,7 @@ public class MySQLConnectionHandler {
                 ja.put("id", rs.getInt("id"));
                 ja.put("validation", rs.getString("validation"));
                 ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
-                ja.put("money", rs.getInt("money"));
+                ja.put("money", rs.getFloat("money"));
                 ja.put("priority", rs.getInt("priority"));
             }
 
@@ -131,7 +131,7 @@ public class MySQLConnectionHandler {
                 ja.put("validation_enterprise", rs.getString("validation_enterprise"));
                 ja.put("validation_product", rs.getString("validation_product"));
                 ja.put("name_product", rs.getString("name_product"));
-                ja.put("price", rs.getInt("price"));
+                ja.put("price", rs.getFloat("price"));
             }
 
             jo.put("product", ja);

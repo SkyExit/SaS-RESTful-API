@@ -14,6 +14,7 @@ import spark.Route;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.text.DecimalFormat;
 
 public class PatchProducts implements Route {
     MySQLConnectionHandler handler;
@@ -25,6 +26,7 @@ public class PatchProducts implements Route {
             return SessionValidationHandler.correct(response);
         }
         Connection connection = handler.getConnection();
+        DecimalFormat dfZero = new DecimalFormat("0.00");
 
         JSONObject body = JRepCrafter.getRequestBody(request, response);
         if(response.status() != 200) return body;
@@ -32,7 +34,7 @@ public class PatchProducts implements Route {
         String enterprise = "";  //NOT NULL
         String val_product = null; //CAN BE NULL ON CREATION
         String name_product = null; //NOT NULL ON CREATION - CAN BE NULL ON PRICE CHANGE
-        Integer price = null; //NOT NULL ON CREATION - CAN BE NULL ON NAME CHANGE
+        Float price = null; //NOT NULL ON CREATION - CAN BE NULL ON NAME CHANGE
         Boolean remove = null; //NEVER TRUE EXCEPT FOR REMOVAL
 
         try {
@@ -45,12 +47,15 @@ public class PatchProducts implements Route {
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You have to provide an enterprise validation ID");
         }
 
-        if(body.has("val_product") && !body.get("val_product").toString().isBlank()) val_product = body.getString("val_product");
-        if(body.has("name_product") && !body.get("name_product").toString().isBlank()) name_product = body.getString("name_product");
-        if(body.has("price") && !body.get("price").toString().isBlank()) price = Integer.parseInt(body.get("price").toString());
-        if(body.has("remove") && !body.get("remove").toString().isBlank()) remove = Boolean.parseBoolean(body.get("remove").toString());
+        try {
+            if(body.has("val_product") && !body.get("val_product").toString().isBlank()) val_product = body.getString("val_product");
+            if(body.has("name_product") && !body.get("name_product").toString().isBlank()) name_product = body.getString("name_product");
+            if(body.has("price") && !body.get("price").toString().isBlank()) price = Float.valueOf(dfZero.format(body.getFloat("price")).replace(',', '.'));
+            if(body.has("remove") && !body.get("remove").toString().isBlank()) remove = Boolean.parseBoolean(body.get("remove").toString());
 
-        if(price != null && price < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "The price hast to be greater than 0!");
+            if(price != null && price < 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "The price hast to be greater than 0!");
+        } catch (Exception e) { SkyLogger.logStack(e); }
+
 
         //SkyLogger.log(enterprise + " " + val_product + " " + name_product + " " + price + " " + remove);
 
@@ -66,7 +71,7 @@ public class PatchProducts implements Route {
                     preparedStmt.setString(1, enterprise);
                     preparedStmt.setString(2, val_product);
                     preparedStmt.setString (3, name_product);
-                    preparedStmt.setInt (4, price);
+                    preparedStmt.setFloat (4, price);
 
                 preparedStmt.execute();
 

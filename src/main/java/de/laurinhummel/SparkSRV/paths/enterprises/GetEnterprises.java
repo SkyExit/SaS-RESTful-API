@@ -54,17 +54,17 @@ public class GetEnterprises implements Route {
                 case 1 -> {
                     while (rs.next()) {
                         ja.put(new JSONObject()
-                                .put("name", rs.getString("validation_enterprise"))
+                                .put("validation", rs.getString("validation_enterprise"))
                                 .put("salary", rs.getInt("salary"))
-                                .put("employed", rs.getBoolean("employed")));
+                                .put("name_enterprise", rs.getString("name_enterprise")));
                     }
                 }
                 case 2,3 -> {
                     while (rs.next()) {
                         ja.put(new JSONObject()
-                                .put("name", rs.getString("validation_employee"))
+                                .put("validation", rs.getString("validation_employee"))
                                 .put("salary", rs.getInt("salary"))
-                                .put("employed", rs.getBoolean("employed")));
+                                .put("name_enterprise", rs.getString("name_enterprise")));
                     }
                 }
             }
