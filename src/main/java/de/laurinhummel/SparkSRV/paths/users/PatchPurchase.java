@@ -42,8 +42,11 @@ public class PatchPurchase implements Route {
         if(customer.getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Customer doesn't exist");
 
         //MONEY VALIDITY CHECKER
+        float tax = 0.2f;
         float cusMoney = customer.getFloat("money");
         float price = Float.parseFloat(dfZero.format(body.getFloat("money")).replace(',', '.'));
+        float taxedPrice = Float.parseFloat(dfZero.format(price - (price * tax)).replace(',', '.'));
+        float taxes = Float.parseFloat(dfZero.format(price - taxedPrice).replace(',', '.'));
 
         if(cusMoney >= price) {
             cusMoney = cusMoney - price;
@@ -53,8 +56,9 @@ public class PatchPurchase implements Route {
 
         //UPDATE MONEY ON DATABASE
         try {
-            connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`=money+" + price + " WHERE `validation`='" + body.getString("enterprise") + "'").execute();
+            connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`=money+" + taxedPrice + " WHERE `validation`='" + body.getString("enterprise") + "'").execute();
             connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`='" + cusMoney + "' WHERE `validation`='" + body.getString("customer") + "'").execute();
+            connection.prepareStatement("UPDATE `" + Main.names[0] + "` SET `money`=money+" + taxes + " WHERE `validation`='ENT-edPdiVdfqh'").execute();
         } catch (SQLException ex) {
             SkyLogger.logStack(ex);
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "There was an error while pushing data back to database");
@@ -62,15 +66,16 @@ public class PatchPurchase implements Route {
 
         //INSERTING DATA INTO HISTORY
         try {
-            String query = "insert into " + Main.names[1] + " (enterprise_validation, enterprise_name, customer_validation, message, money)"
-                    + " values (?, ?, ?, ?, ?)";
+            String query = "insert into " + Main.names[1] + " (taker_validation, taker_name, giver_validation, giver_name, message, money)"
+                    + " values (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
                 preparedStmt.setString(1, body.getString("enterprise"));
                 preparedStmt.setString(2, enterprise.getString("name"));
                 preparedStmt.setString (3, customer.getString("validation"));
-                preparedStmt.setString(4, message);
-                preparedStmt.setFloat (5, price);
+                preparedStmt.setString(4, null);
+                preparedStmt.setString(5, message);
+                preparedStmt.setFloat (6, price);
 
             preparedStmt.execute();
 
@@ -82,6 +87,6 @@ public class PatchPurchase implements Route {
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "There was an error while pushing data back to database");
         }
 
-        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Performing transaction was a success");
+        return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "Performing transaction was a success").put("taxedPrice", taxedPrice).put("taxes", taxes);
     }
 }

@@ -50,12 +50,14 @@ public class MySQLConnectionHandler {
         }
     }
 
-    private void createDatabases(Connection connection) throws SQLException {
-        Main.createWealth(connection);
-        Main.createTransactions(connection);
-        Main.createEmployee(connection);
-        Main.createProducts(connection);
-        Main.createLogin(connection);
+    private void createDatabases(Connection connection) {
+        try {
+            Main.createWealth(connection);
+            Main.createTransactions(connection);
+            Main.createEmployee(connection);
+            Main.createProducts(connection);
+            Main.createLogin(connection);
+        } catch (Exception e) { SkyLogger.logStack(e); }
     }
 
     public boolean isConnected() {

@@ -68,6 +68,8 @@ public class Main {
 
         Spark.patch("/purchase", new PatchPurchase(handler));
         Spark.patch("/purchase/", new PatchPurchase(handler));
+        Spark.patch("/payment", new PatchPayment(handler));
+        Spark.patch("/payment/", new PatchPayment(handler));
 
         //Spark.get("/history/:validation", new GetHistory(handler));                 //DELETE
         //Spark.get("/history/:validation/", new GetHistory(handler));                //DELETE
@@ -121,9 +123,10 @@ public class Main {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[1] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                "enterprise_validation VARCHAR(20) NOT NULL," +
-                "enterprise_name VARCHAR(50) NOT NULL," +
-                "customer_validation VARCHAR(20)," +
+                "taker_validation VARCHAR(20) NOT NULL," +
+                "taker_name VARCHAR(50) NOT NULL," +
+                "giver_validation VARCHAR(20)," +
+                "giver_name VARCHAR(50) NOT NULL," +
                 "message VARCHAR(50) DEFAULT NULL," +
                 "money FLOAT NOT NULL" + ")";
 

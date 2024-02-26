@@ -26,7 +26,7 @@ public class JRepCrafter {
     public static JSONObject cancelOperation(Response response, ResCode statusCode, String message) {
         response.status(statusCode.code);
         return new JSONObject().put("status", response.status())
-                .put("message", message);
+                .put("message", message).put("daniel", 200);
     }
 
     public static JSONObject getRequestBody(Request request, Response response) {
