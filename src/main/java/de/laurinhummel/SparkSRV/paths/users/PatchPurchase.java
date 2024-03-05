@@ -75,7 +75,7 @@ public class PatchPurchase implements Route {
                 preparedStmt.setString (3, customer.getString("validation"));
                 preparedStmt.setString(4, null);
                 preparedStmt.setString(5, message);
-                preparedStmt.setFloat (6, price);
+                preparedStmt.setFloat (6, taxedPrice);
 
             preparedStmt.execute();
 

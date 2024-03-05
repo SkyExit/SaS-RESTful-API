@@ -33,7 +33,9 @@ public class MySQLConnectionHandler {
             DriverManager.setLoginTimeout(7);
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connected!");
-            createDatabases(connection);
+            try {
+                createDatabases(connection);
+            } catch (Exception ignored) {}
             return connection;
         } catch (SQLException e) {
             SkyLogger.logStack(e);
@@ -100,6 +102,8 @@ public class MySQLConnectionHandler {
                 ja.put("name", rs.getString("name") == null ? JSONObject.NULL : rs.getString("name"));
                 ja.put("money", rs.getFloat("money"));
                 ja.put("priority", rs.getInt("priority"));
+                ja.put("owner", rs.getString("owner") == null ? JSONObject.NULL : rs.getString("owner"));
+                ja.put("taxed", rs.getBoolean("taxed"));
             }
 
             jo.put("user", ja);

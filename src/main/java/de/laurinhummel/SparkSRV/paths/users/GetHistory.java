@@ -31,7 +31,7 @@ public class GetHistory implements Route {
             amount = (request.params(":amount") == null || request.params(":amount").isBlank()) ? null : Integer.parseInt(request.params(":amount"));
         } catch (Exception ex) { return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Malformed request"); }
 
-        if(validation != null) sqlArgs.append(" WHERE enterprise_validation='").append(validation).append("' OR customer_validation='").append(validation).append("'");
+        if(validation != null) sqlArgs.append(" WHERE taker_validation='").append(validation).append("' OR giver_validation='").append(validation).append("'");
         sqlArgs.append(" ORDER BY date DESC");
         if(amount != null) sqlArgs.append(" LIMIT ").append(amount);
 
@@ -47,9 +47,10 @@ public class GetHistory implements Route {
                 ja.put(new JSONObject()
                         .put("id", rs.getInt("id"))
                         .put("date", rs.getTimestamp("date"))
-                        .put("enterprise_validation", rs.getString("enterprise_validation"))
-                        .put("enterprise_name", rs.getString("enterprise_name"))
-                        .put("customer_validation", rs.getString("customer_validation"))
+                        .put("taker_validation", rs.getString("taker_validation"))
+                        .put("taker_name", rs.getObject("taker_name"))
+                        .put("giver_validation", rs.getString("giver_validation"))
+                        .put("giver_name", rs.getObject("giver_name"))
                         .put("message", rs.getString("message"))
                         .put("money", rs.getFloat("money")));
             }

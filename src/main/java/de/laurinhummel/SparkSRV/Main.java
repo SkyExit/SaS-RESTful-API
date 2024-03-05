@@ -4,6 +4,7 @@ import de.laurinhummel.SparkSRV.handler.MySQLConnectionHandler;
 import de.laurinhummel.SparkSRV.handler.SkyLogger;
 import de.laurinhummel.SparkSRV.paths.*;
 import de.laurinhummel.SparkSRV.paths.enterprises.GetEnterprises;
+import de.laurinhummel.SparkSRV.paths.enterprises.GetTaxes;
 import de.laurinhummel.SparkSRV.paths.enterprises.PatchEmployee;
 import de.laurinhummel.SparkSRV.paths.products.GetProducts;
 import de.laurinhummel.SparkSRV.paths.products.PatchProducts;
@@ -98,6 +99,9 @@ public class Main {
 
         Spark.patch("/products", new PatchProducts(handler));
         Spark.patch("/products/", new PatchProducts(handler));
+
+        Spark.get("/taxes/:validation", new GetTaxes(handler));
+        Spark.get("/taxes/:validation/", new GetTaxes(handler));
     }
 
     public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v5", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
