@@ -25,7 +25,6 @@ public class GetTaxes implements Route {
         }
 
         JSONObject enterprise = handler.getUserData(enterpriseID, request, response).getJSONObject("user");
-
         if(enterprise.getInt("priority") != 2) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "This is not an enterprise!");
 
         try {

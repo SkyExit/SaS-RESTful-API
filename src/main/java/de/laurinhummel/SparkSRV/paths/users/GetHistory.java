@@ -31,6 +31,10 @@ public class GetHistory implements Route {
             amount = (request.params(":amount") == null || request.params(":amount").isBlank()) ? null : Integer.parseInt(request.params(":amount"));
         } catch (Exception ex) { return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Malformed request"); }
 
+        JSONObject user = handler.getUserData(validation, request, response).getJSONObject("user");
+        if(user.getInt("priority") == 0) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "User not found!");
+
+
         if(validation != null) sqlArgs.append(" WHERE taker_validation='").append(validation).append("' OR giver_validation='").append(validation).append("'");
         sqlArgs.append(" ORDER BY date DESC");
         if(amount != null) sqlArgs.append(" LIMIT ").append(amount);
@@ -62,7 +66,7 @@ public class GetHistory implements Route {
             rs.close();
             preparedStatement.close();
             SkyLogger.log("Fetched transaction history for " + (validation == null ? "global" : validation));
-            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("transactions", ja);
+            return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, null).put("transactions", ja).put("bank", user.getFloat("money"));
         } catch (SQLException e) {
             SkyLogger.logStack(e);
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.INTERNAL_SERVER_ERROR, "Error while parsing user list");
