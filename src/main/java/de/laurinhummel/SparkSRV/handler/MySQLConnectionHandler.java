@@ -30,26 +30,21 @@ public class MySQLConnectionHandler {
         System.out.println("Database: " + url);
         System.out.println("Connecting database...");
         try {
-            DriverManager.setLoginTimeout(7);
+            DriverManager.setLoginTimeout(4);
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connected!");
-            try {
-                createDatabases(connection);
-            } catch (Exception ignored) {}
-            return connection;
         } catch (SQLException e) {
-            SkyLogger.logStack(e);
             try {
                 System.out.println("Connecting Docker database...");
-                connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.2" + ":" + PORT + "/" + DBNAME, username, password);
+                connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.3" + ":" + PORT + "/" + DBNAME, username, password);
                 System.out.println("Database connected!");
-                createDatabases(connection);
-                return connection;
             } catch (SQLException ex) {
                 SkyLogger.logStack(ex);
                 throw new IllegalStateException("Cannot connect the database!", ex);
             }
         }
+        createDatabases(connection);
+        return connection;
     }
 
     private void createDatabases(Connection connection) {
