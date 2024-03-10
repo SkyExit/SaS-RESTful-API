@@ -12,7 +12,8 @@ public class MySQLConnectionHandler {
     public MySQLConnectionHandler() { }
 
     private Connection connect() {
-        String HOSTNAME = "192.168.0.13";
+        //String HOSTNAME = "192.168.0.13";
+        String HOSTNAME = "localhost";
         String PORT = "3306";
         String username = "laurin";
         String DBNAME = "database";
@@ -36,7 +37,7 @@ public class MySQLConnectionHandler {
         } catch (SQLException e) {
             try {
                 System.out.println("Connecting Docker database...");
-                connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.3" + ":" + PORT + "/" + DBNAME, username, password);
+                connection = DriverManager.getConnection("jdbc:mysql://" + "localhost" + ":" + PORT + "/" + DBNAME, username, password);
                 System.out.println("Database connected!");
             } catch (SQLException ex) {
                 SkyLogger.logStack(ex);
