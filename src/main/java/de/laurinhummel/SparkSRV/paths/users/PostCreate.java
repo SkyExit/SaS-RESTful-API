@@ -15,6 +15,7 @@ import spark.Route;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.text.DecimalFormat;
 
 public class PostCreate implements Route {
     MySQLConnectionHandler handler;
@@ -28,6 +29,8 @@ public class PostCreate implements Route {
             Connection connection = handler.getConnection();
 
             boolean taxed = true;
+            DecimalFormat dfZero = new DecimalFormat("0.00");
+            float sum = 0.00f;
 
             //JSON BODY HANDLER
             JSONObject body = JRepCrafter.getRequestBody(request, response);
@@ -40,6 +43,7 @@ public class PostCreate implements Route {
                     if(!body.has("owner") || body.getString("owner").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must have an owner");
                     if(handler.getUserData(body.getString("owner"), request, response).getJSONObject("user").getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must be owner by a valid regular user (no enterprise)");
                     if(body.has("taxed") && !body.getBoolean("taxed")) taxed = false;
+                    if(body.has("money") && body.getFloat("money") > 0.0f) sum = Float.parseFloat(dfZero.format(body.getFloat("money")).replace(',', '.'));
                 } else if(!(body.getInt("priority") == 1)){
                     return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Priority must be 1 or 2");
                 } else { taxed = false; }
@@ -63,7 +67,7 @@ public class PostCreate implements Route {
             String name = isEnterprise ? body.getString("name") : null;
                 preparedStmt.setString(1, val);
                 preparedStmt.setString(2, name);
-                preparedStmt.setString (3, "0");
+                preparedStmt.setFloat (3, sum);
                 preparedStmt.setInt (4, isEnterprise ? 2 : 1);
                 preparedStmt.setString(5, owner);
                 preparedStmt.setBoolean(6, taxed);
@@ -79,7 +83,7 @@ public class PostCreate implements Route {
             SkyLogger.log((name == null ? "User" : "Enterprise") + " created successfully");
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.CREATED, null).put("validationID", val).put("name", name)
                     .put("message", (name == null ? "User" : "Enterprise") + " created successfully").put("password", password)
-                    .put("owner", owner).put("taxed", taxed);
+                    .put("owner", owner).put("taxed", taxed).put("money", sum);
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
             System.err.println(e.getMessage());
