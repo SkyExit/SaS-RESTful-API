@@ -11,8 +11,9 @@ public class MySQLConnectionHandler {
 
     public MySQLConnectionHandler() { }
 
-    private Connection connect() {
-        String HOSTNAME = "192.168.0.13";
+    private Connection connect() throws SQLException {
+        //String HOSTNAME = "192.168.0.13";
+        String HOSTNAME = "172.20.0.3";
         String PORT = "3306";
         String username = "laurin";
         String DBNAME = "database";
@@ -34,6 +35,15 @@ public class MySQLConnectionHandler {
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connected!");
         } catch (SQLException e) {
+            SkyLogger.logStack(e);
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+        /*
+        try {
+            DriverManager.setLoginTimeout(4);
+            connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Database connected!");
+        } catch (SQLException e) {
             try {
                 System.out.println("Connecting Docker database...");
                 connection = DriverManager.getConnection("jdbc:mysql://" + "172.19.0.3" + ":" + PORT + "/" + DBNAME, username, password);
@@ -43,6 +53,8 @@ public class MySQLConnectionHandler {
                 throw new IllegalStateException("Cannot connect the database!", ex);
             }
         }
+
+         */
         createDatabases(connection);
         return connection;
     }
@@ -68,7 +80,7 @@ public class MySQLConnectionHandler {
         return false;
     }
 
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
         if(isConnected()) {
             return connection;
         } else {
