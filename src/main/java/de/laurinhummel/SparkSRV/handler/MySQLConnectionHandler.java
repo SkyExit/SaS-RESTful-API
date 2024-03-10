@@ -13,7 +13,7 @@ public class MySQLConnectionHandler {
 
     private Connection connect() throws SQLException {
         //String HOSTNAME = "192.168.0.13";
-        String HOSTNAME = "172.20.0.3";
+        String HOSTNAME = "172.20.0.2";
         String PORT = "3306";
         String username = "laurin";
         String DBNAME = "database";
