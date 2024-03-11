@@ -46,7 +46,10 @@ public class PostCreate implements Route {
                     if(body.has("money") && body.getFloat("money") > 0.0f) sum = Float.parseFloat(dfZero.format(body.getFloat("money")).replace(',', '.'));
                 } else if(!(body.getInt("priority") == 1)){
                     return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Priority must be 1 or 2");
-                } else { taxed = false; }
+                } else {
+                    taxed = false;
+                    if(body.has("money") && body.getFloat("money") > 0.0f) sum = Float.parseFloat(dfZero.format(body.getFloat("money")).replace(',', '.'));
+                }
             } catch (Exception ex) {
                 return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Malformed json body");
             }
