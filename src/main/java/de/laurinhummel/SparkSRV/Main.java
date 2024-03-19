@@ -127,10 +127,10 @@ public class Main {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS " + names[1] + "(" +
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                "taker_validation VARCHAR(20) NOT NULL," +
-                "taker_name VARCHAR(50) NOT NULL," +
+                "taker_validation VARCHAR(20) DEFAULT NULL," +
+                "taker_name VARCHAR(50) DEFAULT NULL," +
                 "giver_validation VARCHAR(20)," +
-                "giver_name VARCHAR(50) NOT NULL," +
+                "giver_name VARCHAR(50) DEFAULT NULL," +
                 "message VARCHAR(50) DEFAULT NULL," +
                 "money FLOAT NOT NULL" + ")";
 
@@ -157,7 +157,7 @@ public class Main {
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_product VARCHAR(20) NOT NULL," +
-                "name_product VARCHAR(60) NOT NULL," +
+                "name_product VARCHAR(60) DEFAULT NULL," +
                 "price FLOAT NOT NULL DEFAULT 0" + ")";
 
         Statement stmt = conn.createStatement();
