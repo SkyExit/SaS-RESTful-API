@@ -40,8 +40,6 @@ public class GetHistory implements Route {
         if(amount != null) sqlArgs.append(" LIMIT ").append(amount);
 
         try {
-            Main.createWealth(connection);
-
             PreparedStatement preparedStatement = connection.prepareStatement(sqlArgs.toString());
             ResultSet rs = preparedStatement.executeQuery();
 

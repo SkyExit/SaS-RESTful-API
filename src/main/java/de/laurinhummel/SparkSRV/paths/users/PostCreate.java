@@ -77,9 +77,9 @@ public class PostCreate implements Route {
             preparedStmt.execute();
 
             preparedStmt = connection.prepareStatement("insert into " + Main.names[4] + " (validationID, password, enabled) values (?, ?, ?)");
-            preparedStmt.setString(1, val);
-            preparedStmt.setString (2, password);
-            preparedStmt.setBoolean(3, true);
+                preparedStmt.setString(1, val);
+                preparedStmt.setString (2, password);
+                preparedStmt.setBoolean(3, true);
             preparedStmt.execute();
 
 

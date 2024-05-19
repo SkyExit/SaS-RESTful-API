@@ -31,7 +31,4 @@ target
 /build/AA-filenames.txt
 /build/AA-filenames_script.bat
 /build/AA-start.bat
-/info-docker.txt
 /build/data/KeyStore.jks
-/Dockerfile
-/compose.yaml

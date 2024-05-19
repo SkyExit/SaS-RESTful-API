@@ -144,7 +144,7 @@ public class Main {
                 "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                 "validation_enterprise VARCHAR(20) NOT NULL," +
                 "validation_employee VARCHAR(20) NOT NULL," +
-                "name_enterprise VARCHAR(50) NOT NULL," +
+                "name_enterprise VARCHAR(50) DEFAULT NULL," +
                 "salary FLOAT NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();
