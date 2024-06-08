@@ -54,7 +54,10 @@ public class GetHistory implements Route {
                         .put("giver_validation", rs.getString("giver_validation"))
                         .put("giver_name", rs.getObject("giver_name"))
                         .put("message", rs.getString("message"))
-                        .put("money", rs.getFloat("money")));
+                        .put("money", rs.getFloat(switch (user.getInt("priority")) {
+                            case 1 -> "money";
+                            default -> "money_taxed";
+                        })));
             }
 
             if(ja.isEmpty()) {

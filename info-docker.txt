@@ -1,3 +1,5 @@
+Login:  docker login
+
 Build Dockerfile:
 
 docker build -t skyexit/sas-restful-api:v1.0.0-RELEASE .

@@ -64,8 +64,8 @@ public class Main {
         //Spark.get("/users", new GetUsers(handler));                                 //DELETE
         //Spark.get("/users/", new GetUsers(handler));                                //DELETE
 
-        Spark.post("/create", new PostCreate(handler));                             //RESTRICT
-        Spark.post("/create/", new PostCreate(handler));                            //RESTRICT
+        Spark.post("/create", new PostCreate(handler));                         //RESTRICT
+        Spark.post("/create/", new PostCreate(handler));                        //RESTRICT
 
         Spark.patch("/purchase", new PatchPurchase(handler));
         Spark.patch("/purchase/", new PatchPurchase(handler));
@@ -104,7 +104,7 @@ public class Main {
         Spark.get("/taxes/:validation/", new GetTaxes(handler));
     }
 
-    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v5", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
+    public static String[] names = new String[]{"sas_wealth_v3", "sas_transactions_v6", "sas_employee_v2", "sas_products_v1", "sas_login_v1"};
 
     public static String APIKEY = "40263hv-0824ff933a-4014ff9345-d7c0402";
 
@@ -132,6 +132,7 @@ public class Main {
                 "giver_validation VARCHAR(20)," +
                 "giver_name VARCHAR(50) DEFAULT NULL," +
                 "message VARCHAR(50) DEFAULT NULL," +
+                "money_taxed FLOAT DEFAULT NULL," +
                 "money FLOAT NOT NULL" + ")";
 
         Statement stmt = conn.createStatement();

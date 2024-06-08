@@ -63,8 +63,8 @@ public class PatchPayment implements Route {
 
         //INSERTING DATA INTO HISTORY
         try {
-            String query = "insert into " + Main.names[1] + " (taker_validation, taker_name, giver_validation, giver_name, message, money)"
-                    + " values (?, ?, ?, ?, ?, ?)";
+            String query = "insert into " + Main.names[1] + " (taker_validation, taker_name, giver_validation, giver_name, message, money_taxed, money)"
+                    + " values (?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, body.getString("taker"));
@@ -73,6 +73,7 @@ public class PatchPayment implements Route {
             preparedStmt.setString(4, giver.get("name").equals(JSONObject.NULL) ? null : giver.getString("name"));
             preparedStmt.setString(5, message);
             preparedStmt.setFloat (6, sum);
+            preparedStmt.setFloat (7, sum);
 
             preparedStmt.execute();
 

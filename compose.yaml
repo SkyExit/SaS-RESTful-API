@@ -1,6 +1,6 @@
 services:
   sas-restful-api:
-    image: skyexit/sas-restful-api:v1.1.16-RELEASE
+    image: skyexit/sas-restful-api:v1.2.1-RELEASE
     depends_on:
       - db
     ports:
