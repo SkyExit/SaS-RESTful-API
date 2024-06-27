@@ -38,8 +38,8 @@ public class PostCreate implements Route {
 
             try {
                 if(!body.has("priority")) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "You need to set a priority, e.g. 1 or 2");
+                if(!body.has("name") || body.getString("name").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Everyone must have a name");
                 if(body.getInt("priority") == 2) {
-                    if(!body.has("name") || body.getString("name").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must have a name");
                     if(!body.has("owner") || body.getString("owner").isBlank()) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must have an owner");
                     if(handler.getUserData(body.getString("owner"), request, response).getJSONObject("user").getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.BAD_REQUEST, "Enterprises must be owner by a valid regular user (no enterprise)");
                     if(body.has("taxed") && !body.getBoolean("taxed")) taxed = false;
@@ -67,7 +67,7 @@ public class PostCreate implements Route {
             String owner = (body.getInt("priority") == 2) ? ((body.has("owner") && !body.getString("owner").isBlank()) ? body.getString("owner") : null) : null;
 
             PreparedStatement preparedStmt = connection.prepareStatement("insert into " + Main.names[0] + " (validation, name, money, priority, owner, taxed) values (?, ?, ?, ?, ?, ?)");
-            String name = isEnterprise ? body.getString("name") : null;
+            String name = body.getString("name");
                 preparedStmt.setString(1, val);
                 preparedStmt.setString(2, name);
                 preparedStmt.setFloat (3, sum);
@@ -83,9 +83,9 @@ public class PostCreate implements Route {
             preparedStmt.execute();
 
 
-            SkyLogger.log((name == null ? "User" : "Enterprise") + " created successfully");
+            SkyLogger.log((!isEnterprise ? "User" : "Enterprise") + " created successfully");
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.CREATED, null).put("validationID", val).put("name", name)
-                    .put("message", (name == null ? "User" : "Enterprise") + " created successfully").put("password", password)
+                    .put("message", (!isEnterprise ? "User" : "Enterprise") + " created successfully").put("password", password)
                     .put("owner", owner).put("taxed", taxed).put("money", sum);
         } catch (Exception e) {
             System.err.println("Got an exception! - create");
