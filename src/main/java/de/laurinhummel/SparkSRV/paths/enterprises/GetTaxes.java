@@ -29,7 +29,7 @@ public class GetTaxes implements Route {
 
         try {
             return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.OK, "There you go!").put("taxed", enterprise.getBoolean("taxed"))
-                    .put("taxes", enterprise.getBoolean("taxed") ? 20.0f : JSONObject.NULL);
+                    .put("taxes", enterprise.getBoolean("taxed") ? 10.0f : JSONObject.NULL);
         } catch (Exception e) {
             SkyLogger.logStack(e);
             return false;

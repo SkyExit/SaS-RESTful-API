@@ -42,7 +42,7 @@ public class PatchPurchase implements Route {
         if(customer.getInt("priority") != 1) return JRepCrafter.cancelOperation(response, JRepCrafter.ResCode.NOT_FOUND, "Customer doesn't exist");
 
         //MONEY VALIDITY CHECKER
-        float tax = 0.2f;
+        float tax = 0.10f;
         float cusMoney = customer.getFloat("money");
         float price = Float.parseFloat(dfZero.format(body.getFloat("money")).replace(',', '.'));
         float taxedPrice = Float.parseFloat(dfZero.format(price - (price * tax)).replace(',', '.'));
